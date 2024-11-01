@@ -1,4 +1,6 @@
-import Link from "next/link";
+// import Link from "next/link";
+// import LandingFace from "./components/LandingFace";
+import LandingFaceTwo from "./components/LandingFaceTwo";
 
 /**
  * Home page
@@ -11,8 +13,7 @@ import Link from "next/link";
 export default function Home() {
   return (
     <div>
-      <h1>URBAN AI</h1>
-      <Link href="/chat">Chat</Link>
+      <LandingFaceTwo />
     </div>
   );
 }
