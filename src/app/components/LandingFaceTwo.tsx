@@ -12,8 +12,15 @@ import {
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { Menu, Power } from "lucide-react";
+import AuthModal from "./AuthModal";
+import { Toaster } from "react-hot-toast";
+import { useAuth } from "@/lib/auth/hooks";
+import { getUserInitials } from "@/utils/functions";
 
 export default function Component() {
+  // Global User Auth State
+  const { user, isAuthenticated } = useAuth();
+
   // State of sidebar and input
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
   const [isInputFocused, setIsInputFocused] = React.useState(false);
@@ -46,6 +53,9 @@ export default function Component() {
 
   return (
     <div className="h-screen flex flex-col ">
+      <div>
+        <Toaster />
+      </div>
       {/* Header */}
       <header className="border-b px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -69,17 +79,34 @@ export default function Component() {
           <h1 className="text-xl font-semibold">Urban AI</h1>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" className="gap-2">
-            {/* <Info className="h-4 w-4" /> */}
-            LOG IN
-          </Button>
-          <Button variant="ghost" size="sm" className="gap-2">
-            {/* <Info className="h-4 w-4" /> */}
-            SIGN UP
-          </Button>
-          {/* <div className="text-sm text-muted-foreground">LOG IN</div> */}
-          {/* <div className="h-2 w-2 rounded-full bg-green-500" /> */}
-          {/* <div className="text-sm text-muted-foreground">SIGN UP</div> */}
+          {user && isAuthenticated ? (
+            <div className="user-avatar">
+              <span className={`text-base font-extralight tracking-wide`}>
+                {/*TODO Add theme::: {theme} === 'dark' ? 'text-white' : 'text-gray-800` */}
+                {/* @ts-expect-error error for display name */}
+                {getUserInitials(user?.displayName)}
+              </span>
+            </div>
+          ) : (
+            <>
+              <AuthModal
+                defaultView="login"
+                trigger={
+                  <Button variant="ghost" size="sm" className="gap-2">
+                    LOG IN
+                  </Button>
+                }
+              />
+              <AuthModal
+                defaultView="signup"
+                trigger={
+                  <Button variant="ghost" size="sm" className="gap-2">
+                    SIGN UP
+                  </Button>
+                }
+              />
+            </>
+          )}
         </div>
       </header>
 
