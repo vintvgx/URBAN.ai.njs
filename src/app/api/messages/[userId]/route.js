@@ -1,8 +1,14 @@
 import { connectToDatabase } from "@/utils/db";
 import { NextResponse } from "next/server";
 
+/**
+ * Get the chat history for a user
+ * @param {Object} request - The request object
+ * @param {Object} params - The parameters object
+ * @returns {Object} The chat history
+ */
 export async function GET(request, { params }) {
-  const userId = params.userId;
+  const { userId } = await params;
 
   if (!userId) {
     return NextResponse.json({ error: "User ID is required" }, { status: 400 });
