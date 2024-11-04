@@ -1,0 +1,45 @@
+{
+  "client": "Thunder Client",
+  "collectionName": "Urban AI",
+  "dateExported": "2024-02-01T10:00:00.000Z",
+  "version": "1.1",
+  "folders": [],
+  "requests": [
+    {
+      "_id": "1",
+      "name": "Health Check",
+      "method": "GET",
+      "url": "http://localhost:3000/api/health",
+      "colId": "your-collection-id"
+    },
+    {
+      "_id": "2",
+      "name": "Store Message",
+      "method": "POST",
+      "url": "http://localhost:3000/api/store-message",
+      "body": {
+        "type": "json",
+        "raw": "{\"messages\":[{\"role\":\"user\",\"content\":\"Hello there!\",\"timestamp\":\"2024-01-01T00:00:00Z\"}],\"userId\":\"test-user-123\",\"sessionID\":\"test-session-456\"}"
+      },
+      "colId": "your-collection-id"
+    },
+    {
+      "_id": "3",
+      "name": "Chat Response",
+      "method": "POST",
+      "url": "http://localhost:3000/api/chat",
+      "body": {
+        "type": "json",
+        "raw": "{\"message\":\"What's up?\",\"chatHistory\":[{\"role\":\"user\",\"content\":\"Hello!\"},{\"role\":\"assistant\",\"content\":\"Yo, what's good!\"}]}"
+      },
+      "colId": "your-collection-id"
+    },
+    {
+      "_id": "4",
+      "name": "Fetch Messages",
+      "method": "GET",
+      "url": "http://localhost:3000/api/messages/test-user-123",
+      "colId": "your-collection-id"
+    }
+  ]
+}
