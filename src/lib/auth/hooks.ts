@@ -9,7 +9,7 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { auth } from "../firebase/config";
-import { AuthPayload, UserData } from "./types";
+import { AuthPayload } from "./types";
 import { format } from "pretty-format";
 
 const googleProvider = new GoogleAuthProvider();
@@ -102,16 +102,26 @@ export function useGoogleSignIn() {
       try {
         const result = await signInWithPopup(auth, googleProvider);
 
-        // Transform Firebase user into UserData structure
-        const userInfo: UserData = {
-          uid: result.user.uid,
-          email: result.user.email,
-          displayName: result.user.displayName,
-          photoURL: result.user.photoURL,
-          phoneNumber: result.user.phoneNumber,
-        };
+        console.log(
+          "🚀 ~ file: hooks.ts:104 ~ mutationFn: ~ result:",
+          format(result)
+        );
 
-        return userInfo;
+        // Transform Firebase user into UserData structure
+        // const userInfo: UserData = {
+        //   uid: result.user.uid,
+        //   email: result.user.email,
+        //   displayName: result.user.displayName,
+        //   photoURL: result.user.photoURL,
+        //   phoneNumber: result.user.phoneNumber,
+        // };
+
+        console.log(
+          "🚀 ~ file: hooks.ts:115 ~ mutationFn: ~ userInfo:",
+          format(result.user)
+        );
+
+        return result.user;
       } catch (error) {
         console.error("Google sign in error:", error);
         throw error;
