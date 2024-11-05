@@ -25,7 +25,7 @@ export default function Component() {
   const { mutate: signOut } = useLogout();
 
   // State of sidebar and input
-  const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const [isInputFocused, setIsInputFocused] = React.useState(false);
   const [selectedChat, setSelectedChat] = React.useState<ChatSession | null>(
     null
