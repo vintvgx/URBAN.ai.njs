@@ -130,6 +130,7 @@ export default function AuthModal({
               <Input
                 id="email"
                 type="email"
+                autoComplete="new-email"
                 placeholder="john@example.com"
                 value={formData.email}
                 onChange={(e) =>
