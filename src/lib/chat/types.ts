@@ -3,11 +3,15 @@ export interface IMessage {
   type: "user" | "bot";
   content: string;
   timestamp: string;
-  sessionID: string;
+  sessionID?: string;
   createdAt?: Date;
 }
 
 export interface ChatSession {
   sessionID: string;
   messages: IMessage[];
+}
+
+export interface SendMessageResponse {
+  message: string;
 }

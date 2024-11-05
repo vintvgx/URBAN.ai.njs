@@ -4,7 +4,6 @@ import {
   setPersistence,
   browserLocalPersistence,
 } from "firebase/auth";
-import { format } from "pretty-format";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -15,11 +14,6 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
-
-console.log(
-  "🚀 ~ file: config.ts:15 ~ firebaseConfig:",
-  format(firebaseConfig)
-);
 
 // Initialize Firebase
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
