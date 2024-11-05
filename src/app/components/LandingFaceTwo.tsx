@@ -16,10 +16,11 @@ import AuthModal from "./AuthModal";
 import { Toaster } from "react-hot-toast";
 import { useAuth } from "@/lib/auth/hooks";
 import { getUserInitials } from "@/utils/functions";
+import { AuthHook } from "@/lib/auth/types";
 
 export default function Component() {
   // Global User Auth State
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuth() as AuthHook;
 
   // State of sidebar and input
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
@@ -83,7 +84,6 @@ export default function Component() {
             <div className="user-avatar">
               <span className={`text-base font-extralight tracking-wide`}>
                 {/*TODO Add theme::: {theme} === 'dark' ? 'text-white' : 'text-gray-800` */}
-                {/* @ts-expect-error error for display name */}
                 {getUserInitials(user?.displayName)}
               </span>
             </div>
