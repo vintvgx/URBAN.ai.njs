@@ -7,6 +7,7 @@ export interface AuthPayload {
 export interface AuthHook {
   user: UserData | null;
   isAuthenticated: boolean;
+  isLoading: boolean;
 }
 
 // export interface AuthResponse {

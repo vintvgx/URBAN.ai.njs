@@ -12,6 +12,7 @@ import {
 import { auth } from "../firebase/config";
 import { AuthPayload, handleAuthResponse, UserData } from "./types";
 import { format } from "pretty-format";
+import toast from "react-hot-toast";
 
 const googleProvider = new GoogleAuthProvider();
 const facebookProvider = new FacebookAuthProvider();
@@ -22,22 +23,54 @@ googleProvider.setCustomParameters({
 });
 
 export function useAuth() {
-  const { data: user } = useQuery<UserData | null>({
+  const { data: user, isLoading } = useQuery<UserData | null>({
     queryKey: ["auth"],
     queryFn: () =>
       new Promise((resolve) => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-          unsubscribe();
+        // This listener will persist across page reloads
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
           if (user) {
-            return handleAuthResponse(user);
+            // Get the latest tokens
+            const tokenResult = await user.getIdTokenResult();
+            const userData = handleAuthResponse({
+              user,
+              _tokenResponse: {
+                ...tokenResult,
+                expirationTime: new Date(tokenResult.expirationTime).getTime(),
+              },
+            });
+            resolve(userData);
           } else {
             resolve(null);
           }
         });
+
+        // Cleanup subscription on unmount
+        return () => unsubscribe();
       }),
+    staleTime: 1000 * 60 * 30, // Consider data fresh for 30 minutes
   });
 
-  return { user, isAuthenticated: !!user };
+  return {
+    user,
+    isLoading,
+    isAuthenticated: !!user,
+  };
+}
+
+// TODO: Implement token refresh
+export async function refreshAuthToken() {
+  const user = auth.currentUser;
+  if (user) {
+    try {
+      const newToken = await user.getIdToken(true);
+      return newToken;
+    } catch (error) {
+      console.error("Error refreshing token:", error);
+      throw error;
+    }
+  }
+  return null;
 }
 
 export function useLogin() {
@@ -173,7 +206,8 @@ export function useLogout() {
     },
     onSuccess: () => {
       queryClient.setQueryData(["auth"], null);
-
+      queryClient.setQueryData(["chatHistory"], null);
+      toast.success("Logged out successfully");
       //TODO: Update functionality
       /*
        * 1. When user logs out, ensure all data is cleared from the database
