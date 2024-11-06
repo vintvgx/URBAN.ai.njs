@@ -22,8 +22,9 @@ import { ChatSession, IMessage } from "@/lib/chat/types";
 import { SendHorizontal } from "lucide-react";
 import { format } from "pretty-format";
 import RichTextRenderer from "./RichTextEditor";
+import Footer from "./Footer/Footer";
 
-export default function Component() {
+export default function MainComponent() {
   // State of sidebar and input
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const [isInputFocused, setIsInputFocused] = React.useState(false);
@@ -381,20 +382,7 @@ export default function Component() {
           </div>
 
           {/* Footer */}
-          <footer className="border-t p-4 flex items-center justify-center gap-8">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="gap-2"
-              onClick={() => signOut()}>
-              <Power className="h-4 w-4" />
-              SIGN OUT
-            </Button>
-            {/* <Button variant="ghost" size="sm" className="gap-2">
-              <Info className="h-4 w-4" />
-              Information
-            </Button> */}
-          </footer>
+          <Footer signOut={signOut} />
         </main>
       </div>
     </div>

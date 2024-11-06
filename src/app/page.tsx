@@ -1,6 +1,6 @@
 // import Link from "next/link";
 // import LandingFace from "./components/LandingFace";
-import LandingFaceTwo from "./components/LandingFaceTwo";
+import MainComponent from "./components/MainComponent";
 
 /**
  * Home page
@@ -13,7 +13,7 @@ import LandingFaceTwo from "./components/LandingFaceTwo";
 export default function Home() {
   return (
     <div>
-      <LandingFaceTwo />
+      <MainComponent />
     </div>
   );
 }
