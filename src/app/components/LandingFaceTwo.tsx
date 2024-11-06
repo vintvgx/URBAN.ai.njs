@@ -10,12 +10,17 @@ import { Menu, Power } from "lucide-react";
 import AuthModal from "./AuthModal";
 import { Toaster } from "react-hot-toast";
 import { useAuth, useLogout } from "@/lib/auth/hooks";
-import { getUserInitials } from "@/utils/functions";
+import {
+  createOrUpdateSession,
+  createSessionMetadata,
+  getUserInitials,
+} from "@/utils/functions";
 import { AuthHook } from "@/lib/auth/types";
 import { useChatHistory, useSendMessage } from "@/lib/chat/hooks";
 import SidebarContent from "./SidebarContent";
 import { ChatSession, IMessage } from "@/lib/chat/types";
 import { SendHorizontal } from "lucide-react";
+import { format } from "pretty-format";
 
 export default function Component() {
   // State of sidebar and input
@@ -99,14 +104,24 @@ export default function Component() {
       // Add user message to conversation history
       const updatedConversation = [...messages, userMessage];
 
+      console.log(
+        "🚀 ~ file: LandingFaceTwo.tsx:107 ~ handleMessageSubmission ~ updatedConversation:",
+        updatedConversation
+      );
+
       // Send message to AI service
       sendMessage(
         {
           conversationHistory: updatedConversation,
-          userMessage: userMessage.content,
+          userMessage: inputValue,
         },
         {
           onSuccess: (response) => {
+            console.log(
+              "🚀 ~ file: LandingFaceTwo.tsx:116 ~ handleMessageSubmission ~ response:",
+              format(response)
+            );
+
             // Create assistant message from response
             const assistantMessage: IMessage = {
               content: response.message,
@@ -123,11 +138,25 @@ export default function Component() {
             // Clear input field
             setInputValue("");
 
+            //! Deprecated! Updated to createOrUpdateSession to handle session creation and updates
             // Create new conversation session
-            const conversationSession: ChatSession = {
-              messages: completeConversation,
-              sessionID: Date.now().toString(),
-            };
+            // const conversationSession: ChatSession = {
+            //   messages: completeConversation,
+            //   sessionID: Date.now().toString(),
+            //   metadata: createSessionMetadata(user?.uid),
+            // };
+
+            // Create or update conversation session
+            const conversationSession = createOrUpdateSession(
+              completeConversation,
+              selectedChat,
+              user?.uid
+            );
+
+            console.log(
+              "🚀 ~ handleMessageSubmission ~ conversationSession:",
+              format(conversationSession)
+            );
 
             // Update state with new conversation
             setSelectedChat(conversationSession);
