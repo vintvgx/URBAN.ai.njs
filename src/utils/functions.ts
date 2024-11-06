@@ -27,7 +27,7 @@ export function transformChatHistory(rawData: any[]): ChatSession[] {
   return rawData.map((session) => ({
     sessionID: session.sessionID,
     messages: session.messages.map((msg: IMessage) => ({
-      type: msg.type as "user" | "bot",
+      role: msg.role as "user" | "bot",
       content: msg.content,
       timestamp: msg.timestamp,
       sessionID: msg.sessionID,

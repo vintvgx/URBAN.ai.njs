@@ -87,43 +87,57 @@ export default function Component() {
   /**
    * Handle chat request
    */
-  const handleChatRequest = () => {
+  const handleMessageSubmission = () => {
     if (inputValue.trim()) {
-      // Create new message object
-      const newMessage: IMessage = {
-        type: "user",
+      // Create user message object
+      const userMessage: IMessage = {
+        role: "user",
         content: inputValue,
         timestamp: new Date().toISOString(),
       };
 
-      // Update messages state with the new message
-      const updatedMessages = [...messages, newMessage];
-      setMessages(updatedMessages);
+      // Add user message to conversation history
+      const updatedConversation = [...messages, userMessage];
 
-      // Send message with updated chat history
+      // Send message to AI service
       sendMessage(
         {
-          chatHistory: updatedMessages,
-          message: inputValue,
+          conversationHistory: updatedConversation,
+          userMessage: userMessage.content,
         },
         {
-          onSuccess: (data) => {
-            // Add AI response to messages
-            const aiResponse: IMessage = {
-              content: data.message,
-              type: "bot",
+          onSuccess: (response) => {
+            // Create assistant message from response
+            const assistantMessage: IMessage = {
+              content: response.message,
+              role: "assistant",
               timestamp: new Date().toISOString(),
             };
 
-            setMessages((prev) => [...prev, aiResponse]);
-            setInputValue(""); // Clear input after sending
+            // Update conversation with assistant's response
+            const completeConversation = [
+              ...updatedConversation,
+              assistantMessage,
+            ];
 
-            // TODO Apply functionality to scroll to bottom of chat
-            // TODO Add functionality to save chat to database
+            // Clear input field
+            setInputValue("");
+
+            // Create new conversation session
+            const conversationSession: ChatSession = {
+              messages: completeConversation,
+              sessionID: Date.now().toString(),
+            };
+
+            // Update state with new conversation
+            setSelectedChat(conversationSession);
+            setMessages(completeConversation);
+
+            // TODO: Persist conversation to database
           },
           onError: (error) => {
-            console.error("Error sending message:", error);
-            // Handle error (e.g., show toast notification)
+            console.error("Failed to get assistant response:", error);
+            // TODO: Implement error handling with toast notification
           },
         }
       );
@@ -224,14 +238,14 @@ export default function Component() {
                       key={index}
                       className={cn(
                         "flex",
-                        message.type === "user"
+                        message.role === "user"
                           ? "justify-end"
                           : "justify-start"
                       )}>
                       <div
                         className={cn(
                           "max-w-[80%] rounded-lg p-4",
-                          message.type === "user"
+                          message.role === "user"
                             ? "bg-primary text-primary-foreground ml-auto"
                             : "bg-muted"
                         )}>
@@ -250,13 +264,13 @@ export default function Component() {
               <div
                 className={cn(
                   "flex-1 p-6 flex flex-col items-center transition-all duration-300",
-                  isInputFocused ? "justify-end" : "justify-center",
+                  selectedChat ? "justify-end" : "justify-center",
                   "max-w-2xl mx-auto w-full"
                 )}>
                 <div
                   className={cn(
                     "transition-all duration-300",
-                    isInputFocused ? "opacity-0" : "opacity-100"
+                    selectedChat ? "opacity-0" : "opacity-100"
                   )}>
                   <p className="text-xl text-center mb-8 text-muted-foreground">
                     Urban AI reference phrase to get user to understand ai
@@ -275,7 +289,7 @@ export default function Component() {
                   ref={containerRef}
                   className={cn(
                     "w-full space-y-4 transition-all duration-300",
-                    isInputFocused ? "pb-4" : ""
+                    selectedChat ? "pb-4" : ""
                   )}>
                   <div className="flex gap-2">
                     <Input
@@ -288,17 +302,46 @@ export default function Component() {
                       onChange={(e) => setInputValue(e.target.value)}
                       onKeyDown={(e) => {
                         if (e.key === "Enter" && inputValue.trim()) {
-                          handleChatRequest();
+                          handleMessageSubmission();
                         }
                       }}
                     />
                     <Button
                       size="icon"
-                      onClick={handleChatRequest}
+                      onClick={handleMessageSubmission}
                       disabled={!inputValue.trim()}>
                       <SendHorizontal className="h-4 w-4 black" />
                     </Button>
                   </div>
+                </div>
+              </div>
+            )}
+            {selectedChat && (
+              <div
+                ref={containerRef}
+                className={cn(
+                  "w-full space-y-4 transition-all duration-300",
+                  selectedChat ? "opacity-100" : "opacity-0"
+                )}>
+                <div className="flex gap-2">
+                  <Input
+                    ref={inputRef}
+                    className="w-full"
+                    placeholder="Type your message here..."
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && inputValue.trim()) {
+                        handleMessageSubmission();
+                      }
+                    }}
+                  />
+                  <Button
+                    size="icon"
+                    onClick={handleMessageSubmission}
+                    disabled={!inputValue.trim()}>
+                    <SendHorizontal className="h-4 w-4 black" />
+                  </Button>
                 </div>
               </div>
             )}

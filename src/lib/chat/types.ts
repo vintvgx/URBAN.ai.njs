@@ -1,6 +1,6 @@
 // Types
 export interface IMessage {
-  type: "user" | "bot";
+  role: "user" | "assistant" | "system";
   content: string;
   timestamp: string;
   sessionID?: string;

@@ -52,26 +52,40 @@ export function useSendMessage() {
   const { mutate, isPending, error } = useMutation<
     SendMessageResponse,
     Error,
-    { chatHistory: IMessage[]; message: string }
+    { conversationHistory: IMessage[]; userMessage: string }
   >({
-    mutationFn: async ({ chatHistory, message }) => {
-      const response = await fetch(`/open-ai-response`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          message,
-          chatHistory,
-        }),
-      });
+    mutationFn: async ({ conversationHistory, userMessage }) => {
+      console.log(
+        "🚀 ~ file: hooks.ts:57 ~ useSendMessage ~ message:",
+        userMessage
+      );
+      console.log(
+        "🚀 ~ file: hooks.ts:57 ~ useSendMessage ~ chatHistory:",
+        conversationHistory
+      );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+      try {
+        const response = await fetch(`api/chat`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userMessage,
+            conversationHistory,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error("Error sending message:", error);
+        throw error;
       }
-
-      const data = await response.json();
-      return data;
     },
   });
 
