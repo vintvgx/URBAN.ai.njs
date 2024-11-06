@@ -10,14 +10,14 @@ const openai = new OpenAI({
 export async function POST(request) {
   try {
     // Parse the request body
-    const { message, chatHistory } = await request.json();
-    console.log("🚀 ~ file: route.ts ~ POST ~ message:", message);
+    const { userMessage, conversationHistory } = await request.json();
+    console.log("🚀 ~ file: route.ts ~ POST ~ userMessage:", userMessage);
 
     // Construct messages array with system message
     const messages = [
       { role: "system", content: "You respond to queries using urban slang" },
-      ...chatHistory, // Spread the chat history into the messages array
-      { role: "user", content: message },
+      ...conversationHistory, // Spread the chat history into the messages array
+      { role: "user", content: userMessage },
     ];
 
     // Make request to OpenAI
