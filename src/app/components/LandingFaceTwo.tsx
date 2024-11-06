@@ -21,6 +21,7 @@ import SidebarContent from "./SidebarContent";
 import { ChatSession, IMessage } from "@/lib/chat/types";
 import { SendHorizontal } from "lucide-react";
 import { format } from "pretty-format";
+import RichTextRenderer from "./RichTextEditor";
 
 export default function Component() {
   // State of sidebar and input
@@ -116,7 +117,8 @@ export default function Component() {
           userMessage: inputValue,
         },
         {
-          onSuccess: (response) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onSuccess: (response: any) => {
             console.log(
               "🚀 ~ file: LandingFaceTwo.tsx:116 ~ handleMessageSubmission ~ response:",
               format(response)
@@ -124,7 +126,7 @@ export default function Component() {
 
             // Create assistant message from response
             const assistantMessage: IMessage = {
-              content: response.message,
+              content: response,
               role: "assistant",
               timestamp: new Date().toISOString(),
             };
@@ -260,7 +262,7 @@ export default function Component() {
         <main className="flex-1 flex flex-col">
           <div className="flex-1 p-6 flex flex-col">
             {selectedChat ? (
-              <div className="flex-1 space-y-4 overflow-auto">
+              <div className="flex-1 space-y-4 overflow-auto max-h-[calc(100vh-12rem)]">
                 {selectedChat.messages?.map(
                   (message: IMessage, index: number) => (
                     <div
@@ -278,12 +280,14 @@ export default function Component() {
                             ? "bg-primary text-primary-foreground ml-auto"
                             : "bg-muted"
                         )}>
-                        <p className="text-sm">{message.content.toString()}</p>
-                        <p className="text-xs mt-1 opacity-70">
-                          {new Date(
-                            message.timestamp?.toString() ?? ""
-                          ).toLocaleTimeString()}
-                        </p>
+                        {message.role === "assistant" &&
+                        typeof message.content === "object" ? (
+                          <RichTextRenderer content={message.content} />
+                        ) : (
+                          <p className="text-sm">
+                            {message.content.toString()}
+                          </p>
+                        )}
                       </div>
                     </div>
                   )

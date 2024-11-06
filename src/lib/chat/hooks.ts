@@ -64,6 +64,15 @@ export function useSendMessage() {
         conversationHistory
       );
 
+      // Format conversation history before sending
+      const formattedHistory = conversationHistory.map((msg) => ({
+        ...msg,
+        content:
+          typeof msg.content === "string"
+            ? msg.content
+            : msg.content.content.raw,
+      }));
+
       try {
         const response = await fetch(`api/chat`, {
           method: "POST",
@@ -72,7 +81,7 @@ export function useSendMessage() {
           },
           body: JSON.stringify({
             userMessage,
-            conversationHistory,
+            conversationHistory: formattedHistory,
           }),
         });
 
