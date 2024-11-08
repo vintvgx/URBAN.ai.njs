@@ -41,3 +41,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 PROJECT TODOS
 
 - fix open ai key git push issue
+- add pending assitant response animation to chat
