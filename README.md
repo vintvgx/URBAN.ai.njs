@@ -42,3 +42,4 @@ PROJECT TODOS
 
 - fix open ai key git push issue
 - add pending assitant response animation to chat
+- 11/8
