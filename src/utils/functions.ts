@@ -40,14 +40,6 @@ export function transformChatHistory(rawData: any[]): ChatSession[] {
   }));
 }
 
-//! Deprecated! Updated to createOrUpdateSession to handle session creation and updates
-// Function to create session metadata
-export const createSessionMetadata = (userId?: string): SessionMetadata => ({
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
-  ...(userId && { userId }),
-});
-
 /**
  * Updates existing session metadata or creates new metadata
  */

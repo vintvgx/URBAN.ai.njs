@@ -10,11 +10,7 @@ import { Menu, Power } from "lucide-react";
 import AuthModal from "./AuthModal";
 import { Toaster } from "react-hot-toast";
 import { useAuth, useLogout } from "@/lib/auth/hooks";
-import {
-  createOrUpdateSession,
-  createSessionMetadata,
-  getUserInitials,
-} from "@/utils/functions";
+import { createOrUpdateSession, getUserInitials } from "@/utils/functions";
 import { AuthHook } from "@/lib/auth/types";
 import { useChatHistory, useSendMessage } from "@/lib/chat/hooks";
 import SidebarContent from "./SidebarContent";
@@ -23,11 +19,11 @@ import { SendHorizontal } from "lucide-react";
 import { format } from "pretty-format";
 import RichTextRenderer from "./RichTextEditor";
 import Footer from "./Footer/Footer";
+import MainContent from "./Chat/MainContent";
 
 export default function MainComponent() {
   // State of sidebar and input
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
-  const [isInputFocused, setIsInputFocused] = React.useState(false);
   const [messages, setMessages] = React.useState<IMessage[]>([]);
   const [selectedChat, setSelectedChat] = React.useState<ChatSession | null>(
     null
@@ -44,7 +40,6 @@ export default function MainComponent() {
     isAuthenticated,
     isLoading: authLoading,
   } = useAuth() as AuthHook;
-  const { mutate: signOut } = useLogout();
 
   // Chat history state
   const {
@@ -56,30 +51,11 @@ export default function MainComponent() {
   // Send message state
   const { sendMessage, isPending, error } = useSendMessage();
 
+  // Logout hook
+  const { mutate: signOut } = useLogout();
+
   // Combine loading states
   const isLoading = authLoading || chatLoading;
-
-  // Click outside handler for input
-  React.useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      // If the click is outside the input and container, set the input to not be focused
-      if (
-        inputRef.current &&
-        containerRef.current &&
-        !inputRef.current.contains(event.target as Node) &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
-        // Set the input to not be focused
-        setIsInputFocused(false);
-      }
-    }
-
-    // Add event listener for mousedown
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
 
   /**
    * Handle chat selection
@@ -88,7 +64,16 @@ export default function MainComponent() {
   const handleChatSelect = (chat: ChatSession) => {
     setSelectedChat(chat);
     setMessages(chat.messages);
-    setIsInputFocused(true);
+
+    console.log(
+      "🚀 ~ file: MainComponent.tsx:69 ~ handleChatSelect ~ chat:",
+      chat
+    );
+
+    console.log(
+      "🚀 ~ file: MainComponent.tsx:74 ~ handleChatSelect ~ user id:",
+      user?.uid
+    );
   };
 
   /**
@@ -111,7 +96,7 @@ export default function MainComponent() {
         updatedConversation
       );
 
-      // Send message to AI service
+      // Send message to open AI
       sendMessage(
         {
           conversationHistory: updatedConversation,
@@ -140,14 +125,6 @@ export default function MainComponent() {
 
             // Clear input field
             setInputValue("");
-
-            //! Deprecated! Updated to createOrUpdateSession to handle session creation and updates
-            // Create new conversation session
-            // const conversationSession: ChatSession = {
-            //   messages: completeConversation,
-            //   sessionID: Date.now().toString(),
-            //   metadata: createSessionMetadata(user?.uid),
-            // };
 
             // Create or update conversation session
             const conversationSession = createOrUpdateSession(
@@ -261,125 +238,14 @@ export default function MainComponent() {
 
         {/* Main Content */}
         <main className="flex-1 flex flex-col">
-          <div className="flex-1 p-6 flex flex-col">
-            {selectedChat ? (
-              <div className="flex-1 space-y-4 overflow-auto max-h-[calc(100vh-12rem)]">
-                {selectedChat.messages?.map(
-                  (message: IMessage, index: number) => (
-                    <div
-                      key={index}
-                      className={cn(
-                        "flex",
-                        message.role === "user"
-                          ? "justify-end"
-                          : "justify-start"
-                      )}>
-                      <div
-                        className={cn(
-                          "max-w-[80%] rounded-lg p-4",
-                          message.role === "user"
-                            ? "bg-primary text-primary-foreground ml-auto"
-                            : "bg-muted"
-                        )}>
-                        {message.role === "assistant" &&
-                        typeof message.content === "object" ? (
-                          <RichTextRenderer content={message.content} />
-                        ) : (
-                          <p className="text-sm">
-                            {message.content.toString()}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  )
-                )}
-              </div>
-            ) : (
-              <div
-                className={cn(
-                  "flex-1 p-6 flex flex-col items-center transition-all duration-300",
-                  selectedChat ? "justify-end" : "justify-center",
-                  "max-w-2xl mx-auto w-full"
-                )}>
-                <div
-                  className={cn(
-                    "transition-all duration-300",
-                    selectedChat ? "opacity-0" : "opacity-100"
-                  )}>
-                  <p className="text-xl text-center mb-8 text-muted-foreground">
-                    Urban AI reference phrase to get user to understand ai
-                    purpose
-                  </p>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full mb-8">
-                    {Array.from({ length: 4 }).map((_, i) => (
-                      <div
-                        key={i}
-                        className="h-24 rounded-lg border bg-muted/40"
-                      />
-                    ))}
-                  </div>
-                </div>
-                <div
-                  ref={containerRef}
-                  className={cn(
-                    "w-full space-y-4 transition-all duration-300",
-                    selectedChat ? "pb-4" : ""
-                  )}>
-                  <div className="flex gap-2">
-                    <Input
-                      ref={inputRef}
-                      className="w-full"
-                      placeholder="Type your message here..."
-                      onFocus={() => setIsInputFocused(true)}
-                      onClick={() => setIsInputFocused(true)}
-                      value={inputValue}
-                      onChange={(e) => setInputValue(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && inputValue.trim()) {
-                          handleMessageSubmission();
-                        }
-                      }}
-                    />
-                    <Button
-                      size="icon"
-                      onClick={handleMessageSubmission}
-                      disabled={!inputValue.trim()}>
-                      <SendHorizontal className="h-4 w-4 black" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            )}
-            {selectedChat && (
-              <div
-                ref={containerRef}
-                className={cn(
-                  "w-full space-y-4 transition-all duration-300",
-                  selectedChat ? "opacity-100" : "opacity-0"
-                )}>
-                <div className="flex gap-2">
-                  <Input
-                    ref={inputRef}
-                    className="w-full"
-                    placeholder="Type your message here..."
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && inputValue.trim()) {
-                        handleMessageSubmission();
-                      }
-                    }}
-                  />
-                  <Button
-                    size="icon"
-                    onClick={handleMessageSubmission}
-                    disabled={!inputValue.trim()}>
-                    <SendHorizontal className="h-4 w-4 black" />
-                  </Button>
-                </div>
-              </div>
-            )}
-          </div>
+          <MainContent
+            selectedChat={selectedChat}
+            containerRef={containerRef}
+            inputRef={inputRef}
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+            handleMessageSubmission={handleMessageSubmission}
+          />
 
           {/* Footer */}
           <Footer signOut={signOut} />

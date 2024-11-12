@@ -14,6 +14,8 @@ export async function POST(request) {
     const { userMessage, conversationHistory } = await request.json();
 
     // Enhanced system message to request structured responses
+    // TODO: Fix chat request (messages are not responding using urban slang)
+    // TODO: Update implementation to use structured content (blocks) while using urban slang
     const systemMessage = {
       role: "system",
       content: `You are an AI that responds using urban slang while maintaining clear structure. 
