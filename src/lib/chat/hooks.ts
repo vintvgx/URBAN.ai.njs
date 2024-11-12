@@ -24,6 +24,8 @@ async function fetchChatHistory(userId: string): Promise<ChatSession[]> {
 export function useChatHistory(userId: string) {
   const {
     data: chatHistoryData = [],
+    //! isLoading state returns true to sidebarContent even after function has processed
+    //TODO Fix loading state
     // isPending: loading,
     isLoading: loading,
     error,
