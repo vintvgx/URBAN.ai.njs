@@ -2,6 +2,10 @@
 // import LandingFace from "./components/LandingFace";
 import MainComponent from "./components/MainComponent";
 
+
+//TODO Delete :)  11/12
+// W CHAT!
+
 /**
  * Home page
  *
