@@ -4,6 +4,7 @@ import MainComponent from "./components/MainComponent";
 
 
 //TODO Delete :)  11/12
+// redo
 // W CHAT!
 
 /**
