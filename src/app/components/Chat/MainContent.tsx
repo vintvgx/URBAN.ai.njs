@@ -8,26 +8,30 @@ import { Input } from "@/components/ui/input";
 
 interface MainContentProps {
   selectedChat: ChatSession | null;
+  chatMessages: IMessage[] | null; 
   containerRef: React.RefObject<HTMLDivElement>;
   inputRef: React.RefObject<HTMLInputElement>;
   inputValue: string;
   setInputValue: (value: string) => void;
   handleMessageSubmission: () => void;
+  isProcessing: boolean;
 }
 
 const MainContent: React.FC<MainContentProps> = ({
   selectedChat,
+  chatMessages,
   containerRef,
   inputRef,
   inputValue,
   setInputValue,
   handleMessageSubmission,
+  isProcessing
 }) => {
   return (
     <div className="flex-1 p-6 flex flex-col">
-      {selectedChat ? (
+      {chatMessages ? (
         <div className="flex-1 space-y-4 overflow-auto max-h-[calc(100vh-12rem)]">
-          {selectedChat.messages?.map((message: IMessage, index: number) => (
+          {chatMessages?.map((message: IMessage, index: number) => (
             <div
               key={index}
               className={cn(
@@ -50,18 +54,27 @@ const MainContent: React.FC<MainContentProps> = ({
               </div>
             </div>
           ))}
+          {isProcessing && (
+            <div className="flex items-center space-x-2 p-4">
+              <div className="flex space-x-1">
+                <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></span>
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         <div
           className={cn(
             "flex-1 p-6 flex flex-col items-center transition-all duration-300",
-            selectedChat ? "justify-end" : "justify-center",
+            chatMessages ? "justify-end" : "justify-center",
             "max-w-2xl mx-auto w-full"
           )}>
           <div
             className={cn(
               "transition-all duration-300",
-              selectedChat ? "opacity-0" : "opacity-100"
+              chatMessages ? "opacity-0" : "opacity-100"
             )}>
             <p className="text-xl text-center mb-8 text-muted-foreground">
               Urban AI reference phrase to get user to understand ai purpose
@@ -76,7 +89,7 @@ const MainContent: React.FC<MainContentProps> = ({
             ref={containerRef}
             className={cn(
               "w-full space-y-4 transition-all duration-300",
-              selectedChat ? "pb-4" : ""
+              chatMessages ? "pb-4" : ""
             )}>
             <div className="flex gap-2">
               <Input
@@ -101,12 +114,12 @@ const MainContent: React.FC<MainContentProps> = ({
           </div>
         </div>
       )}
-      {selectedChat && (
+      {chatMessages && (
         <div
           ref={containerRef}
           className={cn(
             "w-full space-y-4 transition-all duration-300",
-            selectedChat ? "opacity-100" : "opacity-0"
+            chatMessages ? "opacity-100" : "opacity-0"
           )}>
           <div className="flex gap-2">
             <Input

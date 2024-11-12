@@ -24,11 +24,13 @@ import MainContent from "./Chat/MainContent";
 export default function MainComponent() {
   // State of sidebar and input
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
-  const [messages, setMessages] = React.useState<IMessage[]>([]);
+  const [chatMessages, setChatMessages] = React.useState<IMessage[] | null>(null);
   const [selectedChat, setSelectedChat] = React.useState<ChatSession | null>(
     null
   );
   const [inputValue, setInputValue] = React.useState("");
+  const [isProcessing, setIsProcessing] = React.useState(false);
+
 
   // Refs for input and container
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -67,17 +69,7 @@ export default function MainComponent() {
    */
   const handleChatSelect = (chat: ChatSession) => {
     setSelectedChat(chat);
-    setMessages(chat.messages);
-
-    console.log(
-      "🚀 ~ file: MainComponent.tsx:69 ~ handleChatSelect ~ chat:",
-      chat
-    );
-
-    console.log(
-      "🚀 ~ file: MainComponent.tsx:74 ~ handleChatSelect ~ user id:",
-      user?.uid
-    );
+    setChatMessages(chat.messages);
   };
 
   /**
@@ -91,9 +83,15 @@ export default function MainComponent() {
         content: inputValue,
         timestamp: new Date().toISOString(),
       };
+       // Immediately update UI with user message
+       const updatedConversation = chatMessages ? [...chatMessages, userMessage] : [userMessage];
+       setChatMessages(updatedConversation);
+       setInputValue(""); // Clear input right away
+       setIsProcessing(true); // Show loading state
 
+       //! DEPRECATED: updating conversation immediately ^
       // Add user message to conversation history
-      const updatedConversation = [...messages, userMessage];
+      // const updatedConversation = [...messages, userMessage];
 
       console.log(
         "🚀 ~ file: LandingFaceTwo.tsx:107 ~ handleMessageSubmission ~ updatedConversation:",
@@ -143,8 +141,9 @@ export default function MainComponent() {
             );
 
             // Update state with new conversation
+            setChatMessages(completeConversation);
+            setIsProcessing(false);
             setSelectedChat(conversationSession);
-            setMessages(completeConversation);
 
             // TODO: Persist conversation to database
           },
@@ -244,11 +243,13 @@ export default function MainComponent() {
         <main className="flex-1 flex flex-col">
           <MainContent
             selectedChat={selectedChat}
+            chatMessages={chatMessages}
             containerRef={containerRef}
             inputRef={inputRef}
             inputValue={inputValue}
             setInputValue={setInputValue}
             handleMessageSubmission={handleMessageSubmission}
+            isProcessing={isProcessing} 
           />
 
           {/* Footer */}
