@@ -24,7 +24,8 @@ async function fetchChatHistory(userId: string): Promise<ChatSession[]> {
 export function useChatHistory(userId: string) {
   const {
     data: chatHistoryData = [],
-    isPending: loading,
+    // isPending: loading,
+    isLoading: loading,
     error,
   } = useQuery({
     queryKey: ["chatHistory", userId],

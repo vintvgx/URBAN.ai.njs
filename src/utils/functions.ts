@@ -13,6 +13,12 @@ export function getUserInitials(
   return "U"; // default initials if user or display name is not available
 }
 
+  // Helper function to get first message content
+  export const getFirstMessage = (chat: ChatSession) => {
+    if (!chat.messages || chat.messages.length === 0) return "Empty chat";
+    return chat.messages[0].content.toString();
+  };
+
 // Helper function to extract timestamp from sessionID
 export const extractTimestampFromSessionID = (sessionID: string): Date => {
   if (!sessionID || typeof sessionID !== "string") {
@@ -22,6 +28,15 @@ export const extractTimestampFromSessionID = (sessionID: string): Date => {
 
   const timestampString = sessionID.split("-")[0];
   return new Date(parseInt(timestampString, 10));
+};
+
+// Helper function to format date
+export const formatDate = (timestamp: string) => {
+  const date = new Date(timestamp);
+  return {
+    date: date.toLocaleDateString(),
+    time: date.toLocaleTimeString(),
+  };
 };
 
 // Helper function to transform raw data to properly typed chat history

@@ -1,6 +1,7 @@
 import React from "react";
 import { Sheet, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ChatSession } from "@/lib/chat/types";
+import { formatDate, getFirstMessage } from "@/utils/functions";
 
 interface SidebarContentProps {
   isAuthenticated: boolean;
@@ -17,20 +18,6 @@ const SidebarContent = ({
   chatHistory,
   onChatSelect,
 }: SidebarContentProps) => {
-  // Helper function to get first message content
-  const getFirstMessage = (chat: ChatSession) => {
-    if (!chat.messages || chat.messages.length === 0) return "Empty chat";
-    return chat.messages[0].content.toString();
-  };
-
-  // Helper function to format date
-  const formatDate = (timestamp: string) => {
-    const date = new Date(timestamp);
-    return {
-      date: date.toLocaleDateString(),
-      time: date.toLocaleTimeString(),
-    };
-  };
 
   /**
    * Render content based on authentication and loading state

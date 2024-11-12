@@ -57,6 +57,10 @@ export default function MainComponent() {
   // Combine loading states
   const isLoading = authLoading || chatLoading;
 
+  React.useEffect(() => {
+    console.log("Loading state: ", authLoading , " | ", chatLoading)
+  }, [chatLoading, authLoading])
+
   /**
    * Handle chat selection
    * @param chat - The chat to select

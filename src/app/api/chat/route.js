@@ -18,7 +18,7 @@ export async function POST(request) {
     // TODO: Update implementation to use structured content (blocks) while using urban slang
     const systemMessage = {
       role: "system",
-      content: `You are an AI that responds using urban slang while maintaining clear structure. 
+      content: `You are an AI that responds to queries using urban slang while maintaining clear structure. 
                 Format your responses using markdown when appropriate:
                 - Use # for main headings
                 - Use ## for subheadings
