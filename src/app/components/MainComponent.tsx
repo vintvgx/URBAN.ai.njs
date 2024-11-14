@@ -24,13 +24,14 @@ import MainContent from "./Chat/MainContent";
 export default function MainComponent() {
   // State of sidebar and input
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
-  const [chatMessages, setChatMessages] = React.useState<IMessage[] | null>(null);
+  const [chatMessages, setChatMessages] = React.useState<IMessage[] | null>(
+    null
+  );
   const [selectedChat, setSelectedChat] = React.useState<ChatSession | null>(
     null
   );
   const [inputValue, setInputValue] = React.useState("");
   const [isProcessing, setIsProcessing] = React.useState(false);
-
 
   // Refs for input and container
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -60,8 +61,8 @@ export default function MainComponent() {
   const isLoading = authLoading || chatLoading;
 
   React.useEffect(() => {
-    console.log("Loading state: ", authLoading , " | ", chatLoading)
-  }, [chatLoading, authLoading])
+    console.log("Loading state: ", authLoading, " | ", chatLoading);
+  }, [chatLoading, authLoading]);
 
   /**
    * Handle chat selection
@@ -83,13 +84,15 @@ export default function MainComponent() {
         content: inputValue,
         timestamp: new Date().toISOString(),
       };
-       // Immediately update UI with user message
-       const updatedConversation = chatMessages ? [...chatMessages, userMessage] : [userMessage];
-       setChatMessages(updatedConversation);
-       setInputValue(""); // Clear input right away
-       setIsProcessing(true); // Show loading state
+      // Immediately update UI with user message
+      const updatedConversation = chatMessages
+        ? [...chatMessages, userMessage]
+        : [userMessage];
+      setChatMessages(updatedConversation);
+      setInputValue(""); // Clear input right away
+      setIsProcessing(true); // Show loading state
 
-       //! DEPRECATED: updating conversation immediately ^
+      //! DEPRECATED: updating conversation immediately ^
       // Add user message to conversation history
       // const updatedConversation = [...messages, userMessage];
 
@@ -249,7 +252,7 @@ export default function MainComponent() {
             inputValue={inputValue}
             setInputValue={setInputValue}
             handleMessageSubmission={handleMessageSubmission}
-            isProcessing={isProcessing} 
+            isProcessing={isProcessing}
           />
 
           {/* Footer */}
