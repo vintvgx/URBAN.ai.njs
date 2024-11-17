@@ -1,7 +1,8 @@
 import React from "react";
+import MainComponent from "../components/MainComponent";
 
 const ChatView = () => {
-  return <div>URBAN AI</div>;
+  return <MainComponent />;
 };
 
 export default ChatView;

@@ -1,3 +1,4 @@
+import COMMUNITE_MainContent from "./components/Chat/COMMUNITE_MainContent";
 import MainComponent from "./components/MainComponent";
 
 /**
@@ -11,6 +12,7 @@ import MainComponent from "./components/MainComponent";
 export default function Home() {
   return (
     <div>
+      <COMMUNITE_MainContent />
       <MainComponent />
     </div>
   );
