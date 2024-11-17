@@ -21,7 +21,7 @@ export default function COMMUNITE_MainContent() {
             <Link
               href="/history"
               className="hover:text-neutral-500 transition-colors">
-              00 - HISTORY
+              00 - HISTORY!
             </Link>
           </li>
           <li>
