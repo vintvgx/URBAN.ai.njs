@@ -15,9 +15,7 @@ import { AuthHook } from "@/lib/auth/types";
 import { useChatHistory, useSendMessage } from "@/lib/chat/hooks";
 import SidebarContent from "./SidebarContent";
 import { ChatSession, IMessage } from "@/lib/chat/types";
-import { SendHorizontal } from "lucide-react";
 import { format } from "pretty-format";
-import RichTextRenderer from "./RichTextEditor";
 import Footer from "./Footer/Footer";
 import MainContent from "./Chat/MainContent";
 
