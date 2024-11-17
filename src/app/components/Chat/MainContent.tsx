@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 
 interface MainContentProps {
   selectedChat: ChatSession | null;
-  chatMessages: IMessage[] | null; 
+  chatMessages: IMessage[] | null;
   containerRef: React.RefObject<HTMLDivElement>;
   inputRef: React.RefObject<HTMLInputElement>;
   inputValue: string;
@@ -18,14 +18,13 @@ interface MainContentProps {
 }
 
 const MainContent: React.FC<MainContentProps> = ({
-  selectedChat,
   chatMessages,
   containerRef,
   inputRef,
   inputValue,
   setInputValue,
   handleMessageSubmission,
-  isProcessing
+  isProcessing,
 }) => {
   return (
     <div className="flex-1 p-6 flex flex-col">
