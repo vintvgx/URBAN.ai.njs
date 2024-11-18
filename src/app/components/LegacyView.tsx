@@ -2,24 +2,29 @@
 "use client";
 
 import * as React from "react";
+
+// UI
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { Menu, Power } from "lucide-react";
-import AuthModal from "./AuthModal";
-import { Toaster } from "react-hot-toast";
-import { useAuth, useLogout } from "@/lib/auth/hooks";
-import { createOrUpdateSession, getUserInitials } from "@/utils/functions";
+import toast, { Toaster } from "react-hot-toast";
+
+// Components
+import AuthModal from "./Auth/AuthModal";
 import { AuthHook } from "@/lib/auth/types";
-import { useChatHistory, useSendMessage } from "@/lib/chat/hooks";
-import SidebarContent from "./SidebarContent";
-import { ChatSession, IMessage } from "@/lib/chat/types";
-import { SendHorizontal } from "lucide-react";
-import { format } from "pretty-format";
-import RichTextRenderer from "./RichTextEditor";
+import { useAuth, useLogout } from "@/lib/auth/hooks";
 import Footer from "./Footer/Footer";
+import SidebarContent from "./SidebarContent";
 import MainContent from "./Chat/MainContent";
+
+// Functions
+import { createOrUpdateSession, getUserInitials } from "@/utils/functions";
+import { useChatHistory, useSendMessage } from "@/lib/chat/hooks";
+import { format } from "pretty-format";
+
+// Chat Types
+import { ChatSession, IMessage } from "@/lib/chat/types";
 
 export default function MainComponent() {
   // State of sidebar and input
@@ -74,16 +79,33 @@ export default function MainComponent() {
   };
 
   /**
+   * Handle new chat
+   */
+  const handleNewChat = () => {
+    setSelectedChat(null);
+    setChatMessages(null);
+  };
+
+  /**
    * Handle chat request
    */
-  const handleMessageSubmission = () => {
-    if (inputValue.trim()) {
+  const handleMessageSubmission = (query?: string) => {
+    // If a query button was clicked, clear any existing input first
+    if (query) {
+      setInputValue("");
+    }
+
+    // Now get the message text - query takes precedence if it exists
+    const messageText = query || inputValue.trim();
+
+    if (messageText) {
       // Create user message object
       const userMessage: IMessage = {
         role: "user",
-        content: inputValue,
+        content: messageText,
         timestamp: new Date().toISOString(),
       };
+
       // Immediately update UI with user message
       const updatedConversation = chatMessages
         ? [...chatMessages, userMessage]
@@ -92,29 +114,15 @@ export default function MainComponent() {
       setInputValue(""); // Clear input right away
       setIsProcessing(true); // Show loading state
 
-      //! DEPRECATED: updating conversation immediately ^
-      // Add user message to conversation history
-      // const updatedConversation = [...messages, userMessage];
-
-      console.log(
-        "🚀 ~ file: LandingFaceTwo.tsx:107 ~ handleMessageSubmission ~ updatedConversation:",
-        updatedConversation
-      );
-
       // Send message to open AI
       sendMessage(
         {
           conversationHistory: updatedConversation,
-          userMessage: inputValue,
+          userMessage: messageText,
         },
         {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           onSuccess: (response: any) => {
-            console.log(
-              "🚀 ~ file: LandingFaceTwo.tsx:116 ~ handleMessageSubmission ~ response:",
-              format(response)
-            );
-
             // Create assistant message from response
             const assistantMessage: IMessage = {
               content: response,
@@ -128,19 +136,13 @@ export default function MainComponent() {
               assistantMessage,
             ];
 
-            // Clear input field
-            setInputValue("");
+            console.log(format(completeConversation));
 
             // Create or update conversation session
             const conversationSession = createOrUpdateSession(
               completeConversation,
               selectedChat,
               user?.uid
-            );
-
-            console.log(
-              "🚀 ~ handleMessageSubmission ~ conversationSession:",
-              format(conversationSession)
             );
 
             // Update state with new conversation
@@ -152,7 +154,8 @@ export default function MainComponent() {
           },
           onError: (error) => {
             console.error("Failed to get assistant response:", error);
-            // TODO: Implement error handling with toast notification
+            setIsProcessing(false);
+            toast.error("Failed to get response. Please try again.");
           },
         }
       );
@@ -191,6 +194,14 @@ export default function MainComponent() {
             <Menu className="h-5 w-5" />
           </Button>
           <h1 className="text-xl font-semibold">Urban AI</h1>
+          {selectedChat && (
+            <Button
+              onClick={handleNewChat}
+              variant="outline"
+              className="font-mono ml-2 md:inline-flex">
+              New Chat
+            </Button>
+          )}
         </div>
         <div className="flex items-center gap-2">
           {authLoading ? (
@@ -245,6 +256,8 @@ export default function MainComponent() {
         {/* Main Content */}
         <main className="flex-1 flex flex-col">
           <MainContent
+            user={user}
+            authLoading={authLoading}
             selectedChat={selectedChat}
             chatMessages={chatMessages}
             containerRef={containerRef}

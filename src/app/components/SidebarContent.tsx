@@ -18,7 +18,6 @@ const SidebarContent = ({
   chatHistory,
   onChatSelect,
 }: SidebarContentProps) => {
-
   /**
    * Render content based on authentication and loading state
    * 1. If chat or auth is loading, render a loading spinner
@@ -72,10 +71,10 @@ const SidebarContent = ({
               className="p-3 rounded-lg border hover:bg-accent cursor-pointer transition-colors"
               onClick={() => onChatSelect?.(chat)}>
               <div className="flex flex-col gap-1">
+                <p className="text-sm truncate">{getFirstMessage(chat)}</p>
                 <p className="text-sm font-medium text-muted-foreground">
                   {date} at {time}
                 </p>
-                <p className="text-sm truncate">{getFirstMessage(chat)}</p>
               </div>
             </div>
           );

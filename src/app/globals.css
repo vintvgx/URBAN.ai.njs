@@ -70,3 +70,13 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .user-message {
+    @apply max-w-[80%] text-lg p-4 text-left italic text-neutral-700;
+  }
+
+  .bot-message {
+    @apply max-w-[80%] text-lg text-left whitespace-pre-wrap p-4;
+  }
+}
