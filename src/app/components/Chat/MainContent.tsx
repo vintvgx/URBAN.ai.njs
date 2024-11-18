@@ -36,26 +36,26 @@ const MainContent: React.FC<MainContentProps> = ({
   return (
     <div className="flex-1 p-6 flex flex-col">
       {chatMessages ? (
-        <div className="flex-1 space-y-4 overflow-auto max-h-[calc(100vh-12rem)]">
+        <div className="flex-1 space-y-4 overflow-auto max-h-[calc(100vh-12rem)] w-10/12 justify-center items-center self-center">
           {chatMessages?.map((message: IMessage, index: number) => (
             <div
               key={index}
               className={cn(
                 "flex",
-                message.role === "user" ? "justify-end" : "justify-start"
+                message.role === "user" ? "justify-start" : "justify-end"
               )}>
               <div
                 className={cn(
-                  "max-w-[80%] rounded-lg p-4",
+                  "rounded-lg",
                   message.role === "user"
-                    ? "bg-primary text-primary-foreground ml-auto"
-                    : "bg-muted"
+                    ? "user-message "
+                    : "bot-message bg-muted ml-auto"
                 )}>
                 {message.role === "assistant" &&
                 typeof message.content === "object" ? (
                   <RichTextRenderer content={message.content} />
                 ) : (
-                  <p className="text-sm">{message.content.toString()}</p>
+                  <p>{message.content.toString()}</p>
                 )}
               </div>
             </div>

@@ -23,12 +23,6 @@ const Footer: React.FC<FooterProps> = ({ signOut }) => {
         <Power className="h-4 w-4" />
         SIGN OUT
       </Button>
-      {/* <Link href="/">
-        <Button variant="ghost" size="sm" className="gap-2">
-          <Info className="h-4 w-4" />
-          ALT VIEW
-        </Button>
-      </Link> */}
     </footer>
   );
 };

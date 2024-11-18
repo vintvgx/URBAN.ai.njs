@@ -79,6 +79,14 @@ export default function MainComponent() {
   };
 
   /**
+   * Handle new chat
+   */
+  const handleNewChat = () => {
+    setSelectedChat(null);
+    setChatMessages(null);
+  };
+
+  /**
    * Handle chat request
    */
   const handleMessageSubmission = (query?: string) => {
@@ -186,6 +194,14 @@ export default function MainComponent() {
             <Menu className="h-5 w-5" />
           </Button>
           <h1 className="text-xl font-semibold">Urban AI</h1>
+          {selectedChat && (
+            <Button
+              onClick={handleNewChat}
+              variant="outline"
+              className="font-mono ml-2 md:inline-flex">
+              New Chat
+            </Button>
+          )}
         </div>
         <div className="flex items-center gap-2">
           {authLoading ? (
