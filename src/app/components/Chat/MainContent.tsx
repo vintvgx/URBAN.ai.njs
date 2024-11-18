@@ -36,7 +36,7 @@ const MainContent: React.FC<MainContentProps> = ({
   return (
     <div className="flex-1 p-6 flex flex-col">
       {chatMessages ? (
-        <div className="flex-1 space-y-4 overflow-auto max-h-[calc(100vh-12rem)] w-10/12 justify-center items-center self-center">
+        <div className="flex-1 space-y-4 overflow-auto max-h-[calc(100vh-12rem)] w-10/12 self-center">
           {chatMessages?.map((message: IMessage, index: number) => (
             <div
               key={index}
@@ -93,25 +93,29 @@ const MainContent: React.FC<MainContentProps> = ({
               chatMessages ? "pb-4" : ""
             )}>
             <div className="flex gap-2">
-              <Input
-                ref={inputRef}
-                className="w-full"
-                placeholder="Type your message here..."
-                value={inputValue}
-                autoCapitalize="on"
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && inputValue.trim()) {
-                    handleMessageSubmission();
-                  }
-                }}
-              />
-              <Button
-                size="icon"
-                onClick={() => handleMessageSubmission()}
-                disabled={!inputValue.trim()}>
-                <SendHorizontal className="h-4 w-4 black" />
-              </Button>
+              <div className="relative w-full">
+                <Input
+                  ref={inputRef}
+                  className="w-full text-xl p-4 text-neutral-500/75 bg-neutral-900/[0.063] border-none rounded-2xl"
+                  placeholder="Type your message here..."
+                  value={inputValue}
+                  autoCapitalize="on"
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && inputValue.trim()) {
+                      handleMessageSubmission();
+                    }
+                  }}
+                />
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                  onClick={() => handleMessageSubmission()}
+                  disabled={!inputValue.trim()}>
+                  <SendHorizontal className="h-5 w-5 text-neutral-500" />
+                </Button>
+              </div>
             </div>
             {/* // TODO Place elements (requests) so user can press and enter and process through chat bot  */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full mb-8">
@@ -138,13 +142,13 @@ const MainContent: React.FC<MainContentProps> = ({
         <div
           ref={containerRef}
           className={cn(
-            "w-full space-y-4 transition-all duration-300",
+            "w-full space-y-4 transition-all duration-300 flex justify-center",
             chatMessages ? "opacity-100" : "opacity-0"
           )}>
-          <div className="flex gap-2">
+          <div className="relative w-10/12">
             <Input
               ref={inputRef}
-              className="w-full"
+              className="w-full text-xl p-4 text-neutral-500/75 bg-neutral-900/[0.063] border-none rounded-2xl"
               placeholder="Type your message here..."
               value={inputValue}
               autoCapitalize="on"
@@ -157,9 +161,11 @@ const MainContent: React.FC<MainContentProps> = ({
             />
             <Button
               size="icon"
+              variant="ghost"
+              className="absolute right-2 top-1/2 transform -translate-y-1/2"
               onClick={() => handleMessageSubmission()}
               disabled={!inputValue.trim()}>
-              <SendHorizontal className="h-4 w-4 black" />
+              <SendHorizontal className="h-5 w-5 text-neutral-500" />
             </Button>
           </div>
         </div>
