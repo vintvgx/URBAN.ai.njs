@@ -18,19 +18,24 @@ export async function POST(request) {
     // TODO: Update implementation to use structured content (blocks) while using urban slang
     const systemMessage = {
       role: "system",
-      content: `You are an AI that responds to queries using urban slang while maintaining clear structure. 
-                Format your responses using markdown when appropriate:
-                - Use # for main headings
-                - Use ## for subheadings
-                - Use *** for emphasis
-                - Use \`\`\` for code blocks (specify language)
-                - Use > for quotes or important points
-                - Use - or * for bullet points
-                - Use numbered lists when sequence matters
-                
-                Always structure longer responses with headings and appropriate formatting.
-                When sharing code, always specify the language and use proper code blocks.`,
+      content: "You respond to queries using urban slang",
     };
+
+    // {
+    //   role: "system",
+    //   content: `You are an AI that responds to queries using urban slang while maintaining clear structure.
+    //             Format your responses using markdown when appropriate:
+    //             - Use # for main headings
+    //             - Use ## for subheadings
+    //             - Use *** for emphasis
+    //             - Use \`\`\` for code blocks (specify language)
+    //             - Use > for quotes or important points
+    //             - Use - or * for bullet points
+    //             - Use numbered lists when sequence matters
+
+    //             Always structure longer responses with headings and appropriate formatting.
+    //             When sharing code, always specify the language and use proper code blocks.`,
+    // };
 
     const messages = [
       systemMessage,

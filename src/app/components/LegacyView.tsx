@@ -11,7 +11,7 @@ import { Menu, Power } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 
 // Components
-import AuthModal from "./AuthModal";
+import AuthModal from "./Auth/AuthModal";
 import { AuthHook } from "@/lib/auth/types";
 import { useAuth, useLogout } from "@/lib/auth/hooks";
 import Footer from "./Footer/Footer";
@@ -241,6 +241,7 @@ export default function MainComponent() {
         <main className="flex-1 flex flex-col">
           <MainContent
             user={user}
+            authLoading={authLoading}
             selectedChat={selectedChat}
             chatMessages={chatMessages}
             containerRef={containerRef}

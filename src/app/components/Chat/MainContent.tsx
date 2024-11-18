@@ -6,9 +6,12 @@ import { Button } from "@/components/ui/button";
 import { SendHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { BaseUser } from "@/lib/auth/types";
+import ChatLoadingAnimation from "./ChatLoadingAnimation";
+import AuthLoadingAnimation from "../Auth/AuthLoadingAnimation";
 
 interface MainContentProps {
   user: BaseUser | null;
+  authLoading: boolean;
   selectedChat: ChatSession | null;
   chatMessages: IMessage[] | null;
   containerRef: React.RefObject<HTMLDivElement>;
@@ -21,6 +24,7 @@ interface MainContentProps {
 
 const MainContent: React.FC<MainContentProps> = ({
   user,
+  authLoading,
   chatMessages,
   containerRef,
   inputRef,
@@ -56,15 +60,7 @@ const MainContent: React.FC<MainContentProps> = ({
               </div>
             </div>
           ))}
-          {isProcessing && (
-            <div className="flex items-center space-x-2 p-4">
-              <div className="flex space-x-1">
-                <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-                <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-                <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></span>
-              </div>
-            </div>
-          )}
+          {isProcessing && <ChatLoadingAnimation />}
         </div>
       ) : (
         <div
@@ -78,7 +74,9 @@ const MainContent: React.FC<MainContentProps> = ({
               "transition-all duration-300",
               chatMessages ? "opacity-0" : "opacity-100"
             )}>
-            {user ? (
+            {authLoading ? (
+              <AuthLoadingAnimation />
+            ) : user ? (
               <p className="text-2xl mb-8 text-muted-foreground">
                 Welcome back, {user?.displayName?.split(" ")[0]}
               </p>
@@ -100,6 +98,7 @@ const MainContent: React.FC<MainContentProps> = ({
                 className="w-full"
                 placeholder="Type your message here..."
                 value={inputValue}
+                autoCapitalize="on"
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && inputValue.trim()) {
@@ -148,6 +147,7 @@ const MainContent: React.FC<MainContentProps> = ({
               className="w-full"
               placeholder="Type your message here..."
               value={inputValue}
+              autoCapitalize="on"
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && inputValue.trim()) {
