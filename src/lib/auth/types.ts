@@ -80,6 +80,14 @@ export interface EmailAuthData extends UserData {
   })[];
 }
 
+export interface UserSettings {
+  showSideBar: boolean;
+  userFont: string | undefined;
+  assistantFont: string | undefined;
+  typewriterEffect: boolean; // T: output responses in typerwriter effect F: use loading animation while response is being retrieved
+  
+}
+
 // Type guard functions to check auth type
 export const isGoogleAuth = (user: UserData): user is GoogleAuthData => {
   return user.providerData.some(
