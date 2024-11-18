@@ -5,19 +5,22 @@ import RichTextRenderer from "../RichTextEditor";
 import { Button } from "@/components/ui/button";
 import { SendHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { BaseUser } from "@/lib/auth/types";
 
 interface MainContentProps {
+  user: BaseUser | null;
   selectedChat: ChatSession | null;
   chatMessages: IMessage[] | null;
   containerRef: React.RefObject<HTMLDivElement>;
   inputRef: React.RefObject<HTMLInputElement>;
   inputValue: string;
   setInputValue: (value: string) => void;
-  handleMessageSubmission: () => void;
+  handleMessageSubmission: (query?: string) => void;
   isProcessing: boolean;
 }
 
 const MainContent: React.FC<MainContentProps> = ({
+  user,
   chatMessages,
   containerRef,
   inputRef,
@@ -66,7 +69,7 @@ const MainContent: React.FC<MainContentProps> = ({
       ) : (
         <div
           className={cn(
-            "flex-1 p-6 flex flex-col items-center transition-all duration-300",
+            "flex-1 p-6 flex flex-col items-start",
             chatMessages ? "justify-end" : "justify-center",
             "max-w-2xl mx-auto w-full"
           )}>
@@ -75,14 +78,15 @@ const MainContent: React.FC<MainContentProps> = ({
               "transition-all duration-300",
               chatMessages ? "opacity-0" : "opacity-100"
             )}>
-            <p className="text-xl text-center mb-8 text-muted-foreground">
-              Urban AI reference phrase to get user to understand ai purpose
-            </p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full mb-8">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="h-24 rounded-lg border bg-muted/40" />
-              ))}
-            </div>
+            {user ? (
+              <p className="text-2xl mb-8 text-muted-foreground">
+                Welcome back, {user?.displayName?.split(" ")[0]}
+              </p>
+            ) : (
+              <p className="text-2xl mb-8 text-muted-foreground">
+                What&apos;s the word?
+              </p>
+            )}
           </div>
           <div
             ref={containerRef}
@@ -105,10 +109,28 @@ const MainContent: React.FC<MainContentProps> = ({
               />
               <Button
                 size="icon"
-                onClick={handleMessageSubmission}
+                onClick={() => handleMessageSubmission()}
                 disabled={!inputValue.trim()}>
                 <SendHorizontal className="h-4 w-4 black" />
               </Button>
+            </div>
+            {/* // TODO Place elements (requests) so user can press and enter and process through chat bot  */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full mb-8">
+              {[
+                "What's the tea on the latest celeb drama?",
+                "Can you help me glow up my weekend plans?",
+                "Yo, break it down: What's the vibe with AI these days?",
+                "What's a savage comeback if someone says 'You're so basic'?",
+                "Feeling extra today—any tips on staying cool?",
+                "Hit me with some fire captions for my next selfie!",
+              ].map((query, i) => (
+                <button
+                  key={i}
+                  onClick={() => handleMessageSubmission(query)}
+                  className="flex items-center justify-center h-24 rounded-lg border border-gray-300 bg-gray-50 hover:bg-gray-100 text-sm text-gray-800 font-medium px-4 py-2 shadow-sm transition">
+                  {query}
+                </button>
+              ))}
             </div>
           </div>
         </div>
@@ -135,7 +157,7 @@ const MainContent: React.FC<MainContentProps> = ({
             />
             <Button
               size="icon"
-              onClick={handleMessageSubmission}
+              onClick={() => handleMessageSubmission()}
               disabled={!inputValue.trim()}>
               <SendHorizontal className="h-4 w-4 black" />
             </Button>
