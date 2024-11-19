@@ -1,7 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
 import { Sheet, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { Settings } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { UserSettings } from "@/lib/auth/types";
+import { useMutation } from "@tanstack/react-query";
 import { ChatSession } from "@/lib/chat/types";
 import { formatDate, getFirstMessage } from "@/utils/functions";
+
+// TODO install libraries npx shadcn-ui@latest init
+
+// npx shadcn-ui@latest add button
+// npx shadcn-ui@latest add popover
+// npx shadcn-ui@latest add switch
+// npx shadcn-ui@latest add label
+// npx shadcn-ui@latest add select
+// npx shadcn-ui@latest add sheet
 
 interface SidebarContentProps {
   isAuthenticated: boolean;
@@ -18,6 +45,32 @@ const SidebarContent = ({
   chatHistory,
   onChatSelect,
 }: SidebarContentProps) => {
+  // Add initial settings state
+  const [settings, setSettings] = useState<UserSettings>({
+    showSideBar: true,
+    userFont: undefined,
+    assistantFont: undefined,
+    typewriterEffect: false,
+  });
+
+  // Mutation for updating settings
+  const updateSettingsMutation = useMutation({
+    mutationFn: (newSettings: Partial<UserSettings>) => {
+      // TODO: Implement the actual API call to save settings to database
+      // For now, just update local state
+      setSettings((prev) => ({ ...prev, ...newSettings }));
+      return Promise.resolve();
+    },
+  });
+
+  const fontOptions = [
+    "System Default",
+    "Arial",
+    "Helvetica",
+    "Times New Roman",
+    "Courier New",
+  ];
+
   /**
    * Render content based on authentication and loading state
    * 1. If chat or auth is loading, render a loading spinner
@@ -90,6 +143,81 @@ const SidebarContent = ({
           <SheetTitle>Recent Chats</SheetTitle>
         </SheetHeader>
         <div className="flex-1 overflow-auto p-4">{renderContent()}</div>
+        <div className="p-4 border-t">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="w-full">
+                <Settings className="w-4 h-4 mr-2" />
+                Settings
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="sidebar">Show Sidebar</Label>
+                  <Switch
+                    id="sidebar"
+                    checked={settings.showSideBar}
+                    onCheckedChange={(checked) =>
+                      updateSettingsMutation.mutate({ showSideBar: checked })
+                    }
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="typewriter">Typewriter Effect</Label>
+                  <Switch
+                    id="typewriter"
+                    checked={settings.typewriterEffect}
+                    onCheckedChange={(checked) =>
+                      updateSettingsMutation.mutate({ typewriterEffect: checked })
+                    }
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>User Font</Label>
+                  <Select
+                    value={settings.userFont}
+                    onValueChange={(value) =>
+                      updateSettingsMutation.mutate({ userFont: value })
+                    }>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select font" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {fontOptions.map((font) => (
+                        <SelectItem key={font} value={font}>
+                          {font}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Assistant Font</Label>
+                  <Select
+                    value={settings.assistantFont}
+                    onValueChange={(value) =>
+                      updateSettingsMutation.mutate({ assistantFont: value })
+                    }>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select font" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {fontOptions.map((font) => (
+                        <SelectItem key={font} value={font}>
+                          {font}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
       </Sheet>
     </div>
   );
