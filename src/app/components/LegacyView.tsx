@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Separator } from "@radix-ui/react-select";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function MainComponent() {
   // State of sidebar and input
@@ -216,13 +217,12 @@ export default function MainComponent() {
             )}
           </div>
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             {authLoading ? (
-              // You can replace this with any loading spinner component you prefer
               <div className="animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full" />
             ) : user && isAuthenticated ? (
               <div className="user-avatar">
-                <span className={`text-base font-extralight tracking-wide`}>
-                  {/*TODO Add theme::: {theme} === 'dark' ? 'text-white' : 'text-gray-800` */}
+                <span className="text-base font-extralight tracking-wide">
                   {getUserInitials(user?.displayName)}
                 </span>
               </div>
