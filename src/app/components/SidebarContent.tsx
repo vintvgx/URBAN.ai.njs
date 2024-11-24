@@ -21,15 +21,6 @@ import { useMutation } from "@tanstack/react-query";
 import { ChatSession } from "@/lib/chat/types";
 import { formatDate, getFirstMessage } from "@/utils/functions";
 
-// TODO install libraries npx shadcn-ui@latest init
-
-// npx shadcn-ui@latest add button
-// npx shadcn-ui@latest add popover
-// npx shadcn-ui@latest add switch
-// npx shadcn-ui@latest add label
-// npx shadcn-ui@latest add select
-// npx shadcn-ui@latest add sheet
-
 interface SidebarContentProps {
   isAuthenticated: boolean;
   chatLoading: boolean;
@@ -170,7 +161,9 @@ const SidebarContent = ({
                     id="typewriter"
                     checked={settings.typewriterEffect}
                     onCheckedChange={(checked) =>
-                      updateSettingsMutation.mutate({ typewriterEffect: checked })
+                      updateSettingsMutation.mutate({
+                        typewriterEffect: checked,
+                      })
                     }
                   />
                 </div>
