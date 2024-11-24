@@ -25,6 +25,14 @@ import { format } from "pretty-format";
 
 // Chat Types
 import { ChatSession, IMessage } from "@/lib/chat/types";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
+import { Separator } from "@radix-ui/react-select";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function MainComponent() {
   // State of sidebar and input
@@ -163,14 +171,18 @@ export default function MainComponent() {
   };
 
   return (
-    <div className="h-screen flex flex-col ">
-      <div>
-        <Toaster />
-      </div>
-      {/* Header */}
-      <header className="border-b px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Sheet>
+    <SidebarProvider className="">
+      <AppSidebar />
+      <SidebarInset>
+        {/* <div className="flex-1 flex flex-col"> */}
+        <div>
+          <Toaster />
+        </div>
+
+        {/* Header */}
+        <header className="border-b px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {/* <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden">
                 <Menu className="h-5 w-5" />
@@ -185,61 +197,61 @@ export default function MainComponent() {
                 onChatSelect={handleChatSelect}
               />
             </SheetContent>
-          </Sheet>
-          <Button
+          </Sheet> */}
+            {/* <Button
             variant="ghost"
             size="icon"
             className="hidden md:inline-flex"
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
             <Menu className="h-5 w-5" />
-          </Button>
-          <h1 className="text-xl font-semibold">Urban AI</h1>
-          {selectedChat && (
-            <Button
-              onClick={handleNewChat}
-              variant="outline"
-              className="font-mono ml-2 md:inline-flex">
-              New Chat
-            </Button>
-          )}
-        </div>
-        <div className="flex items-center gap-2">
-          {authLoading ? (
-            // You can replace this with any loading spinner component you prefer
-            <div className="animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full" />
-          ) : user && isAuthenticated ? (
-            <div className="user-avatar">
-              <span className={`text-base font-extralight tracking-wide`}>
-                {/*TODO Add theme::: {theme} === 'dark' ? 'text-white' : 'text-gray-800` */}
-                {getUserInitials(user?.displayName)}
-              </span>
-            </div>
-          ) : (
-            <>
-              <AuthModal
-                defaultView="login"
-                trigger={
-                  <Button variant="ghost" size="sm" className="gap-2">
-                    LOG IN
-                  </Button>
-                }
-              />
-              <AuthModal
-                defaultView="signup"
-                trigger={
-                  <Button variant="ghost" size="sm" className="gap-2">
-                    SIGN UP
-                  </Button>
-                }
-              />
-            </>
-          )}
-        </div>
-      </header>
+          </Button> */}
+            {/* <h1 className="text-xl font-semibold">Urban AI</h1> */}
+            <SidebarTrigger className="-ml-1" />
+            {selectedChat && (
+              <Button
+                onClick={handleNewChat}
+                variant="outline"
+                className="font-mono ml-2 md:inline-flex">
+                New Chat
+              </Button>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            {authLoading ? (
+              <div className="animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full" />
+            ) : user && isAuthenticated ? (
+              <div className="user-avatar">
+                <span className="text-base font-extralight tracking-wide">
+                  {getUserInitials(user?.displayName)}
+                </span>
+              </div>
+            ) : (
+              <>
+                <AuthModal
+                  defaultView="login"
+                  trigger={
+                    <Button variant="ghost" size="sm" className="gap-2">
+                      LOG IN
+                    </Button>
+                  }
+                />
+                <AuthModal
+                  defaultView="signup"
+                  trigger={
+                    <Button variant="ghost" size="sm" className="gap-2">
+                      SIGN UP
+                    </Button>
+                  }
+                />
+              </>
+            )}
+          </div>
+        </header>
 
-      <div className="flex-1 flex overflow-hidden">
-        {/* Sidebar */}
-        <aside
+        <div className="flex-1 flex overflow-hidden">
+          {/* Sidebar */}
+          {/* <aside
           className={cn(
             "w-64 border-r hidden md:block transition-all duration-300",
             !isSidebarOpen && "w-0 opacity-0"
@@ -251,27 +263,29 @@ export default function MainComponent() {
             chatHistory={chatHistory}
             onChatSelect={handleChatSelect}
           />
-        </aside>
+        </aside> */}
 
-        {/* Main Content */}
-        <main className="flex-1 flex flex-col">
-          <MainContent
-            user={user}
-            authLoading={authLoading}
-            selectedChat={selectedChat}
-            chatMessages={chatMessages}
-            containerRef={containerRef}
-            inputRef={inputRef}
-            inputValue={inputValue}
-            setInputValue={setInputValue}
-            handleMessageSubmission={handleMessageSubmission}
-            isProcessing={isProcessing}
-          />
+          {/* Main Content */}
+          <main className="flex-1 flex flex-col">
+            <MainContent
+              user={user}
+              authLoading={authLoading}
+              selectedChat={selectedChat}
+              chatMessages={chatMessages}
+              containerRef={containerRef}
+              inputRef={inputRef}
+              inputValue={inputValue}
+              setInputValue={setInputValue}
+              handleMessageSubmission={handleMessageSubmission}
+              isProcessing={isProcessing}
+            />
 
-          {/* Footer */}
-          <Footer signOut={signOut} />
-        </main>
-      </div>
-    </div>
+            {/* Footer */}
+            <Footer signOut={signOut} />
+          </main>
+        </div>
+      </SidebarInset>
+      {/* </div> */}
+    </SidebarProvider>
   );
 }
