@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/sidebar";
 import { ChatSession } from "@/lib/chat/types";
 import { formatDate, getFirstMessage } from "@/utils/functions";
+import { cn } from "@/lib/utils";
 
 export function NavMain({
   chatHistory,
@@ -35,48 +36,81 @@ export function NavMain({
 
     if (!isAuthenticated) {
       return state === "expanded" ? (
-        <p className="text-sm text-muted-foreground text-center transition-opacity duration-300 ease-in-out animate-in fade-in-50">
-          Please sign in to view chat history
-        </p>
+        <div
+          className={cn(
+            "transition-all duration-300",
+            state === "expanded"
+              ? "opacity-100 translate-x-0"
+              : "opacity-0 -translate-x-4"
+          )}>
+          <p className="text-sm text-muted-foreground text-center">
+            Please sign in to view chat history
+          </p>
+        </div>
       ) : null;
     }
 
     if (chatError) {
       return (
-        <p className="text-sm text-red-500 text-center">
-          Error loading chat history
-        </p>
+        <div
+          className={cn(
+            "transition-all duration-300",
+            state === "expanded"
+              ? "opacity-100 translate-x-0"
+              : "opacity-0 -translate-x-4"
+          )}>
+          <p className="text-sm text-red-500 text-center">
+            Error loading chat history
+          </p>
+        </div>
       );
     }
 
     if (!chatHistory || chatHistory.length === 0) {
       return (
-        <p className="text-sm text-muted-foreground text-center">
-          No chat history found
-        </p>
+        <div
+          className={cn(
+            "transition-all duration-300",
+            state === "expanded"
+              ? "opacity-100 translate-x-0"
+              : "opacity-0 -translate-x-4"
+          )}>
+          <p className="text-sm text-muted-foreground text-center">
+            No chat history found
+          </p>
+        </div>
       );
     }
 
     return (
       <div className="space-y-2">
-        {chatHistory.map((chat: ChatSession) => {
-          const firstMessage = chat.messages[0];
-          const { date, time } = formatDate(firstMessage.timestamp);
+        <div
+          className={cn(
+            "transition-all duration-300",
+            state === "expanded"
+              ? "opacity-100 transition-opacity duration-500"
+              : "opacity-0 -translate-x-4"
+          )}>
+          {state === "expanded" &&
+            chatHistory.map((chat: ChatSession) => {
+              const firstMessage = chat.messages[0];
+              const { date, time } = formatDate(firstMessage.timestamp);
 
-          return (
-            <div
-              key={chat.sessionID}
-              className="p-3 rounded-lg border hover:bg-accent cursor-pointer transition-colors"
-              onClick={() => onChatSelect?.(chat)}>
-              <div className="flex flex-col gap-1">
-                <p className="text-sm truncate">{getFirstMessage(chat)}</p>
-                <p className="text-sm font-medium text-muted-foreground">
-                  {date} at {time}
-                </p>
-              </div>
-            </div>
-          );
-        })}
+              return (
+                <div
+                  key={chat.sessionID}
+                  className="p-3 rounded-lg border hover:bg-accent cursor-pointer transition-colors"
+                  onClick={() => onChatSelect?.(chat)}>
+                  <div className="flex flex-col gap-1">
+                    <p className="text-sm truncate">{getFirstMessage(chat)}</p>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      {date} at {time}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+        </div>
       </div>
     );
   };
