@@ -23,7 +23,7 @@ import { UserData } from "@/lib/auth/types";
 import { getUserInitials } from "@/utils/functions";
 import AuthModal from "@/app/components/Auth/AuthModal";
 
-export function NavUser({ user }: { user: UserData }) {
+export function NavUser({ user }: { user: UserData | null }) {
   const { isMobile } = useSidebar();
   const { state } = useSidebar();
 

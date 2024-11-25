@@ -14,11 +14,22 @@ export const sidebarData = {
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
+  //TODO implement updating my version by sidebarHeader drop down
   organization: [
     {
       name: "Urban AI",
       logo: GalleryVerticalEnd,
-      plan: "Enterprise",
+      plan: "v3",
+    },
+    {
+      name: "Urban AI",
+      logo: GalleryVerticalEnd,
+      plan: "v2",
+    },
+    {
+      name: "Urban AI",
+      logo: GalleryVerticalEnd,
+      plan: "v1",
     },
   ],
   navMain: [
