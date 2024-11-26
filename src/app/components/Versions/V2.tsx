@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/button";
 import { SendHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { BaseUser } from "@/lib/auth/types";
-import ChatLoadingAnimation from "./ChatLoadingAnimation";
+import ChatLoadingAnimation from "../Chat/ChatLoadingAnimation";
 import AuthLoadingAnimation from "../Auth/AuthLoadingAnimation";
 
-interface MainContentProps {
+interface V2Props {
   user: BaseUser | null;
   authLoading: boolean;
   selectedChat: ChatSession | null;
@@ -22,7 +22,7 @@ interface MainContentProps {
   isProcessing: boolean;
 }
 
-const MainContent: React.FC<MainContentProps> = ({
+const V2: React.FC<V2Props> = ({
   user,
   authLoading,
   chatMessages,
@@ -174,4 +174,4 @@ const MainContent: React.FC<MainContentProps> = ({
   );
 };
 
-export default MainContent;
+export default V2;

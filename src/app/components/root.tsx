@@ -16,7 +16,7 @@ import { AuthHook } from "@/lib/auth/types";
 import { useAuth, useLogout } from "@/lib/auth/hooks";
 import Footer from "./Footer/Footer";
 import SidebarContent from "./SidebarContent";
-import MainContent from "./Chat/MainContent";
+import V2 from "./Versions/V2";
 
 // Functions
 import { createOrUpdateSession, getUserInitials } from "@/utils/functions";
@@ -36,11 +36,16 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { version } from "os";
 import { useVersion } from "@/contexts/VersionContext";
 
-//TODO Update to use new version context
 
-export default function MainComponent() {
-  // State of sidebar and input
-  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
+/**
+ *  File defines the application's structure by laying out the Sidebar, Hedaer, MainContent & Footer.
+ *  Handles application's functionality and operations (chat, auth, database)
+ * 
+ * @returns 
+ */
+
+export default function Root() {
+  // State of chat bot conversation
   const [chatMessages, setChatMessages] = React.useState<IMessage[] | null>(
     null
   );
@@ -50,19 +55,12 @@ export default function MainComponent() {
   const [inputValue, setInputValue] = React.useState("");
   const [isProcessing, setIsProcessing] = React.useState(false);
 
-  // Refs for input and container
+  // Refs for input and chat bot container
   const inputRef = React.useRef<HTMLInputElement>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
-  // Version Context (TODO: Update to use new version context)
+  // Version Context for MainContent (chat bot) display
   const { activeVersion } = useVersion();
-
-  React.useEffect(() => {
-    console.log(
-      "🚀 ~ file: LegacyView.tsx:60 ~ MainComponent ~ activeVersion:",
-      activeVersion
-    );
-  }, [activeVersion]);
 
   // Global User Auth State
   const {
@@ -72,13 +70,14 @@ export default function MainComponent() {
   } = useAuth() as AuthHook;
 
   // Chat history state
+  //TODO fix chat history loading error in sidebar
   const {
     chatSessions: chatHistory = [],
     loading: chatLoading,
     error: chatError,
   } = useChatHistory(user?.uid ?? "");
 
-  // Send message state
+  // handles sending chatbot messages 
   const { sendMessage, isPending, error } = useSendMessage();
 
   // Logout hook
@@ -87,6 +86,7 @@ export default function MainComponent() {
   // Combine loading states
   const isLoading = authLoading || chatLoading;
 
+  // TODO Keep for testing & delete when chat history load error is fixed 
   React.useEffect(() => {
     console.log("Loading state: ", authLoading, " | ", chatLoading);
   }, [chatLoading, authLoading]);
@@ -188,7 +188,6 @@ export default function MainComponent() {
     <SidebarProvider className="">
       <AppSidebar />
       <SidebarInset>
-        {/* <div className="flex-1 flex flex-col"> */}
         <div>
           <Toaster />
         </div>
@@ -196,30 +195,6 @@ export default function MainComponent() {
         {/* Header */}
         <header className="border-b px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            {/* <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-64 p-0">
-              <SidebarContent
-                isAuthenticated={isAuthenticated}
-                chatLoading={isLoading}
-                chatError={chatError}
-                chatHistory={chatHistory}
-                onChatSelect={handleChatSelect}
-              />
-            </SheetContent>
-          </Sheet> */}
-            {/* <Button
-            variant="ghost"
-            size="icon"
-            className="hidden md:inline-flex"
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-            <Menu className="h-5 w-5" />
-          </Button> */}
-            {/* <h1 className="text-xl font-semibold">Urban AI</h1> */}
             <SidebarTrigger className="-ml-1" />
             {selectedChat && (
               <Button
@@ -263,25 +238,10 @@ export default function MainComponent() {
           </div>
         </header>
 
+          {/* Main Content (Version) */}
         <div className="flex-1 flex overflow-hidden">
-          {/* Sidebar */}
-          {/* <aside
-          className={cn(
-            "w-64 border-r hidden md:block transition-all duration-300",
-            !isSidebarOpen && "w-0 opacity-0"
-          )}>
-          <SidebarContent
-            isAuthenticated={isAuthenticated}
-            chatLoading={isLoading}
-            chatError={chatError}
-            chatHistory={chatHistory}
-            onChatSelect={handleChatSelect}
-          />
-        </aside> */}
-
-          {/* Main Content */}
           <main className="flex-1 flex flex-col">
-            <MainContent
+            <V2
               user={user}
               authLoading={authLoading}
               selectedChat={selectedChat}
@@ -299,7 +259,6 @@ export default function MainComponent() {
           </main>
         </div>
       </SidebarInset>
-      {/* </div> */}
     </SidebarProvider>
   );
 }

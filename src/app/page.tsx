@@ -1,4 +1,4 @@
-import MainComponent from "./components/Chat/COMMUNITEView";
+import Root from "./components/root";
 
 /**
  * Home page
@@ -11,7 +11,7 @@ import MainComponent from "./components/Chat/COMMUNITEView";
 export default function Home() {
   return (
     <div>
-      <MainComponent />
+      <Root />
     </div>
   );
 }
