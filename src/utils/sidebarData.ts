@@ -19,17 +19,17 @@ export const sidebarData = {
     {
       name: "Urban AI",
       logo: GalleryVerticalEnd,
-      plan: "v3",
+      version: "v3",
     },
     {
       name: "Urban AI",
       logo: GalleryVerticalEnd,
-      plan: "v2",
+      version: "v2",
     },
     {
       name: "Urban AI",
       logo: GalleryVerticalEnd,
-      plan: "v1",
+      version: "v1",
     },
   ],
   navMain: [
