@@ -33,6 +33,10 @@ import {
 import { AppSidebar } from "@/components/app-sidebar";
 import { Separator } from "@radix-ui/react-select";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { version } from "os";
+import { useVersion } from "@/contexts/VersionContext";
+
+//TODO Update to use new version context
 
 export default function MainComponent() {
   // State of sidebar and input
@@ -49,6 +53,16 @@ export default function MainComponent() {
   // Refs for input and container
   const inputRef = React.useRef<HTMLInputElement>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
+
+  // Version Context (TODO: Update to use new version context)
+  const { activeVersion } = useVersion();
+
+  React.useEffect(() => {
+    console.log(
+      "🚀 ~ file: LegacyView.tsx:60 ~ MainComponent ~ activeVersion:",
+      activeVersion
+    );
+  }, [activeVersion]);
 
   // Global User Auth State
   const {

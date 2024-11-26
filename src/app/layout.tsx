@@ -3,6 +3,8 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Providers from "./providers";
 import { ThemeProvider } from "@/components/ui/theme-provider";
+import { VersionProvider } from "@/contexts/VersionContext";
+import { sidebarData } from "@/utils/sidebarData";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -35,7 +37,9 @@ export default function RootLayout({
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange>
-          <Providers>{children}</Providers>
+          <VersionProvider initialVersion={sidebarData.versions[0]}>
+            <Providers>{children}</Providers>
+          </VersionProvider>
         </ThemeProvider>
       </body>
     </html>
