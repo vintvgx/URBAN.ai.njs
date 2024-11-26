@@ -35,6 +35,7 @@ import { Separator } from "@radix-ui/react-select";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { version } from "os";
 import { useVersion } from "@/contexts/VersionContext";
+import Header from "@/components/Header/header";
 
 
 /**
@@ -91,6 +92,7 @@ export default function Root() {
     console.log("Loading state: ", authLoading, " | ", chatLoading);
   }, [chatLoading, authLoading]);
 
+  // TODO Implement functionlaity between sidebar & MainContent to update state of chat bot when conversation is pressed 
   /**
    * Handle chat selection
    * @param chat - The chat to select
@@ -101,7 +103,7 @@ export default function Root() {
   };
 
   /**
-   * Handle new chat
+   * Handle clearing chat content and creating new conversation
    */
   const handleNewChat = () => {
     setSelectedChat(null);
@@ -109,7 +111,9 @@ export default function Root() {
   };
 
   /**
-   * Handle chat request
+   * Handles sending the input chat request, keeping conversation order and updating states 
+   * 
+   * @param query the string of the example query clicked 
    */
   const handleMessageSubmission = (query?: string) => {
     // If a query button was clicked, clear any existing input first
@@ -117,7 +121,7 @@ export default function Root() {
       setInputValue("");
     }
 
-    // Now get the message text - query takes precedence if it exists
+    // the chosen query takes precedence if it exists & if not, set text to inputValue (trim white spaces)
     const messageText = query || inputValue.trim();
 
     if (messageText) {
@@ -132,6 +136,7 @@ export default function Root() {
       const updatedConversation = chatMessages
         ? [...chatMessages, userMessage]
         : [userMessage];
+      
       setChatMessages(updatedConversation);
       setInputValue(""); // Clear input right away
       setIsProcessing(true); // Show loading state
@@ -186,58 +191,24 @@ export default function Root() {
 
   return (
     <SidebarProvider className="">
+      {/* Sidebar */}
       <AppSidebar />
+
+
       <SidebarInset>
         <div>
           <Toaster />
         </div>
 
         {/* Header */}
-        <header className="border-b px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <SidebarTrigger className="-ml-1" />
-            {selectedChat && (
-              <Button
-                onClick={handleNewChat}
-                variant="outline"
-                className="font-mono ml-2 md:inline-flex">
-                New Chat
-              </Button>
-            )}
-          </div>
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            {authLoading ? (
-              <div className="animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full" />
-            ) : user && isAuthenticated ? (
-              <div className="user-avatar">
-                <span className="text-base font-extralight tracking-wide">
-                  {getUserInitials(user?.displayName)}
-                </span>
-              </div>
-            ) : (
-              <>
-                <AuthModal
-                  defaultView="login"
-                  trigger={
-                    <Button variant="ghost" size="sm" className="gap-2">
-                      LOG IN
-                    </Button>
-                  }
-                />
-                <AuthModal
-                  defaultView="signup"
-                  trigger={
-                    <Button variant="ghost" size="sm" className="gap-2">
-                      SIGN UP
-                    </Button>
-                  }
-                />
-              </>
-            )}
-          </div>
-        </header>
-
+        <Header
+          selectedChat={selectedChat}
+          handleNewChat={handleNewChat}
+          authLoading={authLoading}
+          isAuthenticated={isAuthenticated}
+          user={user}
+          />
+    
           {/* Main Content (Version) */}
         <div className="flex-1 flex overflow-hidden">
           <main className="flex-1 flex flex-col">
