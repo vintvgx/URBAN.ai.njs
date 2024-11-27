@@ -23,7 +23,7 @@ import { UserData } from "@/lib/auth/types";
 import { getUserInitials } from "@/utils/functions";
 import AuthModal from "@/app/components/Auth/AuthModal";
 
-export function NavUser({ user }: { user: UserData | null }) {
+export function NavUser({ user, authLoading, isAuthenticated }: { user: UserData | null, authLoading: boolean, isAuthenticated: boolean }) {
   const { isMobile } = useSidebar();
   const { state } = useSidebar();
 
@@ -35,7 +35,9 @@ export function NavUser({ user }: { user: UserData | null }) {
             <SidebarMenuButton
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
-              {user ? (
+              {authLoading ? (
+              <div className="animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full" />
+            ) : user && isAuthenticated ? (
                 <>
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarFallback className="rounded-lg">

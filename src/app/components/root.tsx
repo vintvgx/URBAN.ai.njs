@@ -16,7 +16,7 @@ import { AuthHook } from "@/lib/auth/types";
 import { useAuth, useLogout } from "@/lib/auth/hooks";
 import Footer from "./Footer/Footer";
 import SidebarContent from "./SidebarContent";
-import MainContent from "./Chat/MainContent";
+import V2 from "./Versions/V2";
 
 // Functions
 import { createOrUpdateSession, getUserInitials } from "@/utils/functions";
@@ -35,12 +35,18 @@ import { Separator } from "@radix-ui/react-select";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { version } from "os";
 import { useVersion } from "@/contexts/VersionContext";
+import Header from "@/components/Header/header";
 
-//TODO Update to use new version context
 
-export default function MainComponent() {
-  // State of sidebar and input
-  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
+/**
+ *  File defines the application's structure by laying out the Sidebar, Hedaer, MainContent & Footer.
+ *  Handles application's functionality and operations (chat, auth, database)
+ * 
+ * @returns 
+ */
+
+export default function Root() {
+  // State of chat bot conversation
   const [chatMessages, setChatMessages] = React.useState<IMessage[] | null>(
     null
   );
@@ -50,19 +56,12 @@ export default function MainComponent() {
   const [inputValue, setInputValue] = React.useState("");
   const [isProcessing, setIsProcessing] = React.useState(false);
 
-  // Refs for input and container
+  // Refs for input and chat bot container
   const inputRef = React.useRef<HTMLInputElement>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
-  // Version Context (TODO: Update to use new version context)
+  // Version Context for MainContent (chat bot) display
   const { activeVersion } = useVersion();
-
-  React.useEffect(() => {
-    console.log(
-      "🚀 ~ file: LegacyView.tsx:60 ~ MainComponent ~ activeVersion:",
-      activeVersion
-    );
-  }, [activeVersion]);
 
   // Global User Auth State
   const {
@@ -72,13 +71,14 @@ export default function MainComponent() {
   } = useAuth() as AuthHook;
 
   // Chat history state
+  //TODO fix chat history loading error in sidebar
   const {
     chatSessions: chatHistory = [],
     loading: chatLoading,
     error: chatError,
   } = useChatHistory(user?.uid ?? "");
 
-  // Send message state
+  // handles sending chatbot messages 
   const { sendMessage, isPending, error } = useSendMessage();
 
   // Logout hook
@@ -87,10 +87,12 @@ export default function MainComponent() {
   // Combine loading states
   const isLoading = authLoading || chatLoading;
 
+  // TODO Keep for testing & delete when chat history load error is fixed 
   React.useEffect(() => {
     console.log("Loading state: ", authLoading, " | ", chatLoading);
   }, [chatLoading, authLoading]);
 
+  // TODO Implement functionlaity between sidebar & MainContent to update state of chat bot when conversation is pressed 
   /**
    * Handle chat selection
    * @param chat - The chat to select
@@ -101,7 +103,7 @@ export default function MainComponent() {
   };
 
   /**
-   * Handle new chat
+   * Handle clearing chat content and creating new conversation
    */
   const handleNewChat = () => {
     setSelectedChat(null);
@@ -109,7 +111,9 @@ export default function MainComponent() {
   };
 
   /**
-   * Handle chat request
+   * Handles sending the input chat request, keeping conversation order and updating states 
+   * 
+   * @param query the string of the example query clicked 
    */
   const handleMessageSubmission = (query?: string) => {
     // If a query button was clicked, clear any existing input first
@@ -117,7 +121,7 @@ export default function MainComponent() {
       setInputValue("");
     }
 
-    // Now get the message text - query takes precedence if it exists
+    // the chosen query takes precedence if it exists & if not, set text to inputValue (trim white spaces)
     const messageText = query || inputValue.trim();
 
     if (messageText) {
@@ -132,6 +136,7 @@ export default function MainComponent() {
       const updatedConversation = chatMessages
         ? [...chatMessages, userMessage]
         : [userMessage];
+      
       setChatMessages(updatedConversation);
       setInputValue(""); // Clear input right away
       setIsProcessing(true); // Show loading state
@@ -186,102 +191,28 @@ export default function MainComponent() {
 
   return (
     <SidebarProvider className="">
+      {/* Sidebar */}
       <AppSidebar />
+
+
       <SidebarInset>
-        {/* <div className="flex-1 flex flex-col"> */}
         <div>
           <Toaster />
         </div>
 
         {/* Header */}
-        <header className="border-b px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {/* <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-64 p-0">
-              <SidebarContent
-                isAuthenticated={isAuthenticated}
-                chatLoading={isLoading}
-                chatError={chatError}
-                chatHistory={chatHistory}
-                onChatSelect={handleChatSelect}
-              />
-            </SheetContent>
-          </Sheet> */}
-            {/* <Button
-            variant="ghost"
-            size="icon"
-            className="hidden md:inline-flex"
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-            <Menu className="h-5 w-5" />
-          </Button> */}
-            {/* <h1 className="text-xl font-semibold">Urban AI</h1> */}
-            <SidebarTrigger className="-ml-1" />
-            {selectedChat && (
-              <Button
-                onClick={handleNewChat}
-                variant="outline"
-                className="font-mono ml-2 md:inline-flex">
-                New Chat
-              </Button>
-            )}
-          </div>
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            {authLoading ? (
-              <div className="animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full" />
-            ) : user && isAuthenticated ? (
-              <div className="user-avatar">
-                <span className="text-base font-extralight tracking-wide">
-                  {getUserInitials(user?.displayName)}
-                </span>
-              </div>
-            ) : (
-              <>
-                <AuthModal
-                  defaultView="login"
-                  trigger={
-                    <Button variant="ghost" size="sm" className="gap-2">
-                      LOG IN
-                    </Button>
-                  }
-                />
-                <AuthModal
-                  defaultView="signup"
-                  trigger={
-                    <Button variant="ghost" size="sm" className="gap-2">
-                      SIGN UP
-                    </Button>
-                  }
-                />
-              </>
-            )}
-          </div>
-        </header>
-
-        <div className="flex-1 flex overflow-hidden">
-          {/* Sidebar */}
-          {/* <aside
-          className={cn(
-            "w-64 border-r hidden md:block transition-all duration-300",
-            !isSidebarOpen && "w-0 opacity-0"
-          )}>
-          <SidebarContent
-            isAuthenticated={isAuthenticated}
-            chatLoading={isLoading}
-            chatError={chatError}
-            chatHistory={chatHistory}
-            onChatSelect={handleChatSelect}
+        <Header
+          selectedChat={selectedChat}
+          handleNewChat={handleNewChat}
+          authLoading={authLoading}
+          isAuthenticated={isAuthenticated}
+          user={user}
           />
-        </aside> */}
-
-          {/* Main Content */}
+    
+          {/* Main Content (Version) */}
+        <div className="flex-1 flex overflow-hidden">
           <main className="flex-1 flex flex-col">
-            <MainContent
+            <V2
               user={user}
               authLoading={authLoading}
               selectedChat={selectedChat}
@@ -299,7 +230,6 @@ export default function MainComponent() {
           </main>
         </div>
       </SidebarInset>
-      {/* </div> */}
     </SidebarProvider>
   );
 }
