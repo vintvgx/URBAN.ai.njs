@@ -188,6 +188,33 @@ export default function Root() {
       );
     }
   };
+  
+  const renderVersion = () => {
+    switch (activeVersion.version) {
+      case 'V1': 
+        return null;
+      case 'V2':
+        return (
+          <V2
+            user={user}
+            authLoading={authLoading}
+            selectedChat={selectedChat}
+            chatMessages={chatMessages}
+            containerRef={containerRef}
+            inputRef={inputRef}
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+            handleMessageSubmission={handleMessageSubmission}
+            isProcessing={isProcessing}
+          />
+        );
+      case 'V3':
+        return null;
+      default:
+        return null;
+    }
+  }
+
 
   return (
     <SidebarProvider className="">
