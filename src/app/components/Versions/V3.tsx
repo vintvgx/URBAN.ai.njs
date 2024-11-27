@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Menu } from "lucide-react";
 
-export default function MainComponent() {
+export default function V3() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
