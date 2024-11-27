@@ -89,7 +89,7 @@ export default function Root() {
 
   // TODO Keep for testing & delete when chat history load error is fixed 
   React.useEffect(() => {
-    console.log("Loading state: ", authLoading, " | ", chatLoading);
+    console.log("Loading state: ", authLoading, " | ", chatLoading, " | ", isLoading);
   }, [chatLoading, authLoading]);
 
   // TODO Implement functionlaity between sidebar & MainContent to update state of chat bot when conversation is pressed 
@@ -188,7 +188,7 @@ export default function Root() {
       );
     }
   };
-  
+
   const renderVersion = () => {
     switch (activeVersion.version) {
       case 'V1': 
