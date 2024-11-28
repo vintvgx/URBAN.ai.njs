@@ -3,7 +3,6 @@ import * as React from "react";
 
 type Version = {
   name: string;
-  //   logo: React.ElementType;
   version: string;
 };
 

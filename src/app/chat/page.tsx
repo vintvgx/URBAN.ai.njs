@@ -1,8 +1,8 @@
 import React from "react";
-import MainComponent from "../components/Chat/COMMUNITEView";
+import V3 from "../components/Versions/V3";
 
 const ChatView = () => {
-  return <MainComponent />;
+  return <V3 />;
 };
 
 export default ChatView;

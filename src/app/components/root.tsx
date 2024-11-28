@@ -89,7 +89,7 @@ export default function Root() {
 
   // TODO Keep for testing & delete when chat history load error is fixed 
   React.useEffect(() => {
-    console.log("Loading state: ", authLoading, " | ", chatLoading);
+    console.log("Loading state: ", authLoading, " | ", chatLoading, " | ", isLoading);
   }, [chatLoading, authLoading]);
 
   // TODO Implement functionlaity between sidebar & MainContent to update state of chat bot when conversation is pressed 
@@ -188,6 +188,33 @@ export default function Root() {
       );
     }
   };
+
+  const renderVersion = () => {
+    switch (activeVersion.version) {
+      case 'V1': 
+        return null;
+      case 'V2':
+        return (
+          <V2
+            user={user}
+            authLoading={authLoading}
+            selectedChat={selectedChat}
+            chatMessages={chatMessages}
+            containerRef={containerRef}
+            inputRef={inputRef}
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+            handleMessageSubmission={handleMessageSubmission}
+            isProcessing={isProcessing}
+          />
+        );
+      case 'V3':
+        return null;
+      default:
+        return null;
+    }
+  }
+
 
   return (
     <SidebarProvider className="">

@@ -37,7 +37,7 @@ export default function RootLayout({
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange>
-          <VersionProvider initialVersion={sidebarData.versions[0]}>
+          <VersionProvider initialVersion={sidebarData.versions[1]}>
             <Providers>{children}</Providers>
           </VersionProvider>
         </ThemeProvider>
