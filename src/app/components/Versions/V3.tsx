@@ -61,11 +61,6 @@ export default function V3() {
         <header className="flex items-center justify-between mb-20">
           <h1 className="text-4xl font-bold tracking-tight">URBAN.AI</h1>
           <div className="flex gap-4">
-            <Link href="/chat">
-              <Button variant="outline" className="font-mono">
-                Alt View
-              </Button>
-            </Link>
             <Button variant="outline" className="font-mono">
               Log in
             </Button>
