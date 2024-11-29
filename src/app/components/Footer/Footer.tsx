@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useVersion } from "@/contexts/VersionContext";
 import { Power } from "lucide-react";
-import Link from "next/link";
 import React from "react";
 
 interface FooterProps {
@@ -9,16 +8,11 @@ interface FooterProps {
 }
 
 const Footer: React.FC<FooterProps> = ({ signOut }) => {
-  const {activeVersion} = useVersion()
-  
+  const { activeVersion } = useVersion();
+
   return (
     <footer className="border-t p-4 flex items-center justify-between">
       <div className="flex items-center gap-8">
-        <Link href="/">
-          <Button variant="outline" className="font-mono">
-            Alt View
-          </Button>
-        </Link>
         <Button
           variant="ghost"
           size="sm"
@@ -28,7 +22,9 @@ const Footer: React.FC<FooterProps> = ({ signOut }) => {
           SIGN OUT
         </Button>
       </div>
-      <span className="text-sm text-muted-foreground">{activeVersion.version}</span>
+      <span className="text-sm text-muted-foreground">
+        {activeVersion.version}
+      </span>
     </footer>
   );
 };

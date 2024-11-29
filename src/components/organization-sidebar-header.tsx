@@ -16,18 +16,20 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import Image from "next/image";
+import { useTheme } from "next-themes";
 
 export function SideBarUrbanAIHeader({
   versions,
 }: {
   versions: {
     name: string;
-    // logo: React.ElementType;
     version: string;
   }[];
 }) {
-  const { isMobile } = useSidebar();
+  const { isMobile, state } = useSidebar();
   const { activeVersion, setActiveVersion } = useVersion();
+  const { theme } = useTheme();
 
   return (
     <SidebarMenu>
@@ -37,16 +39,24 @@ export function SideBarUrbanAIHeader({
             <SidebarMenuButton
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <GalleryVerticalEnd className="size-4" />
+              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary-foreground text-sidebar-primary-foreground">
+                <Image
+                  src={`/LOGO${theme === "light" ? "B" : "B"}.png`}
+                  alt="Urban AI Logo"
+                  className="size-5"
+                  width={16}
+                  height={16}
+                />
               </div>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">Urban AI</span>
-                <span className="truncate text-xs">
-                  {activeVersion.version}
-                </span>
-              </div>
-              <ChevronsUpDown className="ml-auto" />
+              {state !== "collapsed" && (
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-semibold">Urban AI</span>
+                  <span className="truncate text-xs">
+                    {activeVersion.version}
+                  </span>
+                </div>
+              )}
+              {state !== "collapsed" && <ChevronsUpDown className="ml-auto" />}
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
