@@ -1,9 +1,17 @@
+import React from "react";
 import { ChatSession, IMessage } from "@/lib/chat/types";
 import { cn } from "@/lib/utils";
-import React from "react";
 import RichTextRenderer from "../RichTextEditor";
 import { Button } from "@/components/ui/button";
-import { SendHorizontal } from "lucide-react";
+import {
+  SendHorizontal,
+  Sparkles,
+  MessageSquare,
+  Lightbulb,
+  Smile,
+  Camera,
+  Activity,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { BaseUser } from "@/lib/auth/types";
 import ChatLoadingAnimation from "../Chat/ChatLoadingAnimation";
@@ -33,6 +41,33 @@ const V2: React.FC<V2Props> = ({
   handleMessageSubmission,
   isProcessing,
 }) => {
+  const exampleQueries = [
+    {
+      icon: <MessageSquare className="w-4 h-4" />,
+      text: "What's the tea on the latest celeb drama?",
+    },
+    {
+      icon: <Sparkles className="w-4 h-4" />,
+      text: "Can you help me glow up my weekend plans?",
+    },
+    {
+      icon: <Lightbulb className="w-4 h-4" />,
+      text: "Yo, break it down: What's the vibe with AI these days?",
+    },
+    {
+      icon: <Smile className="w-4 h-4" />,
+      text: "What's a savage comeback if someone says 'You're so basic'?",
+    },
+    {
+      icon: <Activity className="w-4 h-4" />,
+      text: "Feeling extra today—any tips on staying cool?",
+    },
+    {
+      icon: <Camera className="w-4 h-4" />,
+      text: "Hit me with some fire captions for my next selfie!",
+    },
+  ];
+
   return (
     <div className="flex-1 p-6 flex flex-col">
       {chatMessages ? (
@@ -48,7 +83,7 @@ const V2: React.FC<V2Props> = ({
                 className={cn(
                   "rounded-lg",
                   message.role === "user"
-                    ? "user-message "
+                    ? "user-message"
                     : "bot-message bg-muted ml-auto"
                 )}>
                 {message.role === "assistant" &&
@@ -65,73 +100,64 @@ const V2: React.FC<V2Props> = ({
       ) : (
         <div
           className={cn(
-            "flex-1 p-6 flex flex-col items-start",
+            "flex-1 p-6 flex flex-col items-center",
             chatMessages ? "justify-end" : "justify-center",
-            "max-w-2xl mx-auto w-full"
+            "max-w-3xl mx-auto w-full"
           )}>
           <div
             className={cn(
-              "transition-all duration-300",
+              "transition-all duration-300 mb-8",
               chatMessages ? "opacity-0" : "opacity-100"
             )}>
             {authLoading ? (
               <AuthLoadingAnimation />
             ) : user ? (
-              <p className="text-2xl mb-8 text-muted-foreground">
+              <h2 className="text-2xl font-semibold text-center dark:text-white">
                 Welcome back, {user?.displayName?.split(" ")[0]}
-              </p>
+              </h2>
             ) : (
-              <p className="text-2xl mb-8 text-muted-foreground">
+              <h2 className="text-2xl font-semibold text-center dark:text-white">
                 What&apos;s the word?
-              </p>
+              </h2>
             )}
           </div>
-          <div
-            ref={containerRef}
-            className={cn(
-              "w-full space-y-4 transition-all duration-300",
-              chatMessages ? "pb-4" : ""
-            )}>
-            <div className="flex gap-2">
-              <div className="relative w-full">
-                <Input
-                  ref={inputRef}
-                  className="w-full text-xl p-4 text-neutral-500/75 bg-neutral-900/[0.063] border-none rounded-2xl"
-                  placeholder="Type your message here..."
-                  value={inputValue}
-                  autoCapitalize="on"
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && inputValue.trim()) {
-                      handleMessageSubmission();
-                    }
-                  }}
-                />
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2"
-                  onClick={() => handleMessageSubmission()}
-                  disabled={!inputValue.trim()}>
-                  <SendHorizontal className="h-5 w-5 text-neutral-500" />
-                </Button>
-              </div>
+          <div ref={containerRef} className="w-full max-w-2xl space-y-6">
+            <div className="relative">
+              <Input
+                ref={inputRef}
+                className="w-full text-base p-4 pr-12 bg-background border-border rounded-lg dark:bg-[#1e1e1e] dark:border-gray-800"
+                placeholder="Type your message here..."
+                value={inputValue}
+                autoCapitalize="on"
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && inputValue.trim()) {
+                    handleMessageSubmission();
+                  }
+                }}
+              />
+              <Button
+                size="icon"
+                variant="ghost"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                onClick={() => handleMessageSubmission()}
+                disabled={!inputValue.trim()}>
+                <SendHorizontal className="h-5 w-5" />
+              </Button>
             </div>
-            {/* // TODO Place elements (requests) so user can press and enter and process through chat bot  */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full mb-8">
-              {[
-                "What's the tea on the latest celeb drama?",
-                "Can you help me glow up my weekend plans?",
-                "Yo, break it down: What's the vibe with AI these days?",
-                "What's a savage comeback if someone says 'You're so basic'?",
-                "Feeling extra today—any tips on staying cool?",
-                "Hit me with some fire captions for my next selfie!",
-              ].map((query, i) => (
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {exampleQueries.map((query, i) => (
                 <button
                   key={i}
-                  onClick={() => handleMessageSubmission(query)}
-                  className="flex items-center justify-center h-24 rounded-lg border border-gray-300 bg-gray-50 hover:bg-gray-100 text-sm text-gray-800 font-medium px-4 py-2 shadow-sm transition">
-                  {query}
+                  onClick={() => handleMessageSubmission(query.text)}
+                  className="flex items-center gap-3 p-4 text-left rounded-lg border border-gray-800 bg-background hover:bg-muted transition-colors duration-200 dark:bg-[#1e1e1e] dark:border-gray-800 dark:hover:bg-[#2a2a2a] group">
+                  <span className="text-muted-foreground group-hover:text-foreground transition-colors duration-200">
+                    {query.icon}
+                  </span>
+                  <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors duration-200">
+                    {query.text}
+                  </span>
                 </button>
               ))}
             </div>
@@ -145,10 +171,10 @@ const V2: React.FC<V2Props> = ({
             "w-full space-y-4 transition-all duration-300 flex justify-center",
             chatMessages ? "opacity-100" : "opacity-0"
           )}>
-          <div className="relative w-10/12">
+          <div className="relative w-10/12 max-w-2xl">
             <Input
               ref={inputRef}
-              className="w-full text-xl p-4 text-neutral-500/75 bg-neutral-900/[0.063] border-none rounded-2xl"
+              className="w-full text-base p-4 pr-12 bg-background border-border rounded-lg dark:bg-[#1e1e1e] dark:border-gray-800"
               placeholder="Type your message here..."
               value={inputValue}
               autoCapitalize="on"
@@ -165,7 +191,7 @@ const V2: React.FC<V2Props> = ({
               className="absolute right-2 top-1/2 transform -translate-y-1/2"
               onClick={() => handleMessageSubmission()}
               disabled={!inputValue.trim()}>
-              <SendHorizontal className="h-5 w-5 text-neutral-500" />
+              <SendHorizontal className="h-5 w-5" />
             </Button>
           </div>
         </div>
