@@ -72,15 +72,15 @@ const V1: React.FC<VersionProps> = ({
                     ? "text-muted-foreground italic text-left"
                     : "text-foreground text-left whitespace-pre-wrap"
                 )}>
-                {typeof message.content === "string"
+                {/* {typeof message.content === "string"
                   ? message.content
-                  : JSON.stringify(message.content)}
-                {/* {message.role === "assistant" &&
+                  : JSON.stringify(message.content)} */}
+                {message.role === "assistant" &&
                 typeof message.content === "object" ? (
                   <RichTextRenderer content={message.content} />
                 ) : (
                   <p>{message.content.toString()}</p>
-                )} */}
+                )}
               </div>
             </div>
           ))}

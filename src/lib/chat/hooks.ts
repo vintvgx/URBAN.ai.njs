@@ -1,6 +1,7 @@
 import { transformChatHistory } from "@/utils/functions";
 import { ChatSession, IMessage, SendMessageResponse } from "./types";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { UserSettings } from "../auth/types";
 
 /**
  * Fetches chat history from the database
@@ -107,4 +108,95 @@ export function useSendMessage() {
     isPending,
     error,
   };
+}
+
+/**
+ * Hook to store messages in the database
+ */
+export function useStoreMessage() {
+  return useMutation({
+    mutationFn: async ({
+      messages,
+      userId,
+      sessionID,
+    }: {
+      messages: IMessage[];
+      userId: string;
+      sessionID: string;
+    }) => {
+      const response = await fetch('/api/store-message', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages,
+          userId,
+          sessionID,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to store messages');
+      }
+
+      return response.json();
+    },
+  });
+}
+
+/**
+ * Hook to save user conversation history to the database
+ * @param messages - The messages to save
+ * @param userId - The user ID to save the messages for
+ * @param sessionID - The session ID to save the messages for
+ * @returns The mutation function and state
+ */
+export function useSaveConversationHistory() {
+  const { mutate, isPending, error } = useMutation({
+    mutationFn: async ({ messages, userId, sessionID }: { messages: IMessage[]; userId: string; sessionID: string }) => {
+      const response = await fetch('/api/store-message', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ messages, userId, sessionID }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save conversation history');
+      }
+
+      return response.json();
+    },
+  });
+
+  return {
+    saveConversationHistory: mutate,
+    isPending,
+    error,
+  };
+}
+
+/**
+ * Hook to save user settings to the database
+ */
+export function useSaveSettings() {
+  return useMutation({
+    mutationFn: async ({ settings, userId }: { settings: UserSettings; userId: string }) => {
+      const response = await fetch('/api/save-settings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ settings, userId }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save settings');
+      }
+
+      return response.json();
+    },
+  });
 }

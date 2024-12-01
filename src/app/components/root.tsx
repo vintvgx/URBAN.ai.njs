@@ -3,6 +3,7 @@
 
 import * as React from "react";
 import { useState, useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 // UI
 import { Button } from "@/components/ui/button";
@@ -21,7 +22,7 @@ import V2 from "./Versions/V2";
 
 // Functions
 import { createOrUpdateSession, getUserInitials } from "@/utils/functions";
-import { useChatHistory, useSendMessage } from "@/lib/chat/hooks";
+import { useChatHistory, useSaveConversationHistory, useSendMessage, useStoreMessage } from "@/lib/chat/hooks";
 import { format } from "pretty-format";
 
 // Chat Types
@@ -49,6 +50,9 @@ import V1 from "./Versions/V1";
  */
 
 export default function Root() {
+  // Query client for handling queries
+  const queryClient = useQueryClient();
+
   // State of chat bot conversation
   const [chatMessages, setChatMessages] = React.useState<IMessage[] | null>(
     null
@@ -83,6 +87,10 @@ export default function Root() {
 
   // handles sending chatbot messages
   const { sendMessage, isPending, error } = useSendMessage();
+ 
+  // Store messages in the database
+  const { saveConversationHistory } = useSaveConversationHistory();
+  // const {storeMessage} = useStoreMessage();
 
   // Sidebar state
   const { state, toggleSidebar } = useSidebar();
@@ -109,6 +117,7 @@ export default function Root() {
 
   // Combine loading states
   const isLoading = authLoading || chatLoading;
+
 
   /**
    * Handle chat selection
@@ -167,7 +176,7 @@ export default function Root() {
         },
         {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onSuccess: (response: any) => {
+          onSuccess: async (response: any) => {
             // Create assistant message from response
             const assistantMessage: IMessage = {
               content: response,
@@ -176,12 +185,7 @@ export default function Root() {
             };
 
             // Update conversation with assistant's response
-            const completeConversation = [
-              ...updatedConversation,
-              assistantMessage,
-            ];
-
-            console.log(format(completeConversation));
+            const completeConversation = [...updatedConversation, assistantMessage];
 
             // Create or update conversation session
             const conversationSession = createOrUpdateSession(
@@ -189,16 +193,45 @@ export default function Root() {
               selectedChat,
               user?.uid
             );
+            console.log("Conversation session ID: ", conversationSession.sessionID);
+
+            // If user is authenticated, store the conversation
+            if (isAuthenticated && user?.uid) {
+              try {
+                // await storeMessage.mutateAsync({
+                //   messages: completeConversation,
+                //   userId: user.uid,
+                //   sessionID: conversationSession.sessionID,
+                // });
+                console.log("User is authenticated.Saving conversation history");
+                saveConversationHistory({
+                  messages: completeConversation,
+                  userId: user.uid,
+                  sessionID: conversationSession.sessionID,
+                },
+                {
+                  onSuccess: () => {
+                    console.log("Conversation saved successfully");
+                    // Invalidate the chatHistory query to trigger a refetch
+                    queryClient.invalidateQueries({ queryKey: ["chatHistory", user.uid] });
+                  },
+                });
+              } catch (error) {
+                console.error('Failed to store conversation:', error);
+                toast.error('Failed to save conversation');
+              }
+            }
 
             // Update state with new conversation
             setChatMessages(completeConversation);
             setIsProcessing(false);
             setSelectedChat(conversationSession);
-
-            // TODO: Persist conversation to database
           },
           onError: (error) => {
-            //TODO on error, update conversation by subtracting request messag
+            // Remove the failed message by getting all messages except the last one
+            const conversationWithoutFailedMessage = chatMessages?.slice(0, -1) || [];
+            setChatMessages(conversationWithoutFailedMessage);
+            
             console.error("Failed to get assistant response:", error);
             setIsProcessing(false);
             toast.error("Failed to get response. Please try again.");

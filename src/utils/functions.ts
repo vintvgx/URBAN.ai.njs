@@ -77,6 +77,7 @@ export const createOrUpdateSession = (
 ): ChatSession => {
   // If we have an existing session, update it
   if (existingSession) {
+    console.log("Updating existing session");
     return {
       ...existingSession,
       messages,
@@ -85,6 +86,7 @@ export const createOrUpdateSession = (
   }
 
   // If no existing session, create a new one
+  console.log("Creating new session");
   return {
     sessionID: uuidv4(),
     messages,
