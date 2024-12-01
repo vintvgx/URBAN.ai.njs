@@ -37,12 +37,11 @@ import { version } from "os";
 import { useVersion } from "@/contexts/VersionContext";
 import Header from "@/components/Header/header";
 
-
 /**
  *  File defines the application's structure by laying out the Sidebar, Hedaer, MainContent & Footer.
  *  Handles application's functionality and operations (chat, auth, database)
- * 
- * @returns 
+ *
+ * @returns
  */
 
 export default function Root() {
@@ -78,7 +77,7 @@ export default function Root() {
     error: chatError,
   } = useChatHistory(user?.uid ?? "");
 
-  // handles sending chatbot messages 
+  // handles sending chatbot messages
   const { sendMessage, isPending, error } = useSendMessage();
 
   // Logout hook
@@ -87,17 +86,24 @@ export default function Root() {
   // Combine loading states
   const isLoading = authLoading || chatLoading;
 
-  // TODO Keep for testing & delete when chat history load error is fixed 
+  // TODO Keep for testing & delete when chat history load error is fixed
   React.useEffect(() => {
-    console.log("Loading state: ", authLoading, " | ", chatLoading, " | ", isLoading);
+    console.log(
+      "Loading state: ",
+      authLoading,
+      " | ",
+      chatLoading,
+      " | ",
+      isLoading
+    );
   }, [chatLoading, authLoading]);
 
-  // TODO Implement functionlaity between sidebar & MainContent to update state of chat bot when conversation is pressed 
   /**
    * Handle chat selection
    * @param chat - The chat to select
    */
   const handleChatSelect = (chat: ChatSession) => {
+    console.log("Chat selected: ", chat);
     setSelectedChat(chat);
     setChatMessages(chat.messages);
   };
@@ -111,9 +117,9 @@ export default function Root() {
   };
 
   /**
-   * Handles sending the input chat request, keeping conversation order and updating states 
-   * 
-   * @param query the string of the example query clicked 
+   * Handles sending the input chat request, keeping conversation order and updating states
+   *
+   * @param query the string of the example query clicked
    */
   const handleMessageSubmission = (query?: string) => {
     // If a query button was clicked, clear any existing input first
@@ -136,7 +142,7 @@ export default function Root() {
       const updatedConversation = chatMessages
         ? [...chatMessages, userMessage]
         : [userMessage];
-      
+
       setChatMessages(updatedConversation);
       setInputValue(""); // Clear input right away
       setIsProcessing(true); // Show loading state
@@ -180,6 +186,7 @@ export default function Root() {
             // TODO: Persist conversation to database
           },
           onError: (error) => {
+            //TODO on error, update conversation by subtracting request messag
             console.error("Failed to get assistant response:", error);
             setIsProcessing(false);
             toast.error("Failed to get response. Please try again.");
@@ -191,9 +198,9 @@ export default function Root() {
 
   const renderVersion = () => {
     switch (activeVersion.version) {
-      case 'V1': 
+      case "V1":
         return null;
-      case 'V2':
+      case "V2":
         return (
           <V2
             user={user}
@@ -208,19 +215,17 @@ export default function Root() {
             isProcessing={isProcessing}
           />
         );
-      case 'V3':
+      case "V3":
         return null;
       default:
         return null;
     }
-  }
-
+  };
 
   return (
     <SidebarProvider className="">
       {/* Sidebar */}
-      <AppSidebar />
-
+      <AppSidebar onChatSelect={handleChatSelect} />
 
       <SidebarInset>
         <div>
@@ -234,9 +239,9 @@ export default function Root() {
           authLoading={authLoading}
           isAuthenticated={isAuthenticated}
           user={user}
-          />
-    
-          {/* Main Content (Version) */}
+        />
+
+        {/* Main Content (Version) */}
         <div className="flex-1 flex overflow-hidden">
           <main className="flex-1 flex flex-col">
             <V2

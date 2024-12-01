@@ -52,7 +52,7 @@ const V2: React.FC<V2Props> = ({
     },
     {
       icon: <Lightbulb className="w-4 h-4" />,
-      text: "Yo, break it down: What's the vibe with AI these days?",
+      text: "Yo, break it down: What's the latest buzz with AI?",
     },
     {
       icon: <Smile className="w-4 h-4" />,
