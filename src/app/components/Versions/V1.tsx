@@ -50,7 +50,7 @@ const V1: React.FC<VersionProps> = ({
   }, [inputValue, chatMessages]);
 
   return (
-    <div className="h-screen">
+    <div className="flex-1">
       <div className="chat-wrapper">
         <div className="chat-container" ref={containerRef}>
           {chatMessages?.map((message, index) => (
