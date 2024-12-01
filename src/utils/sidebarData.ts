@@ -7,11 +7,11 @@ export const sidebarData = {
     avatar: "/avatars/shadcn.jpg",
   },
   versions: [
-    {
-      name: "Version 3",
-      // logo: GalleryVerticalEnd,
-      version: "v3",
-    },
+    // {
+    //   name: "Version 3",
+    //   // logo: GalleryVerticalEnd,
+    //   version: "v3",
+    // },
     {
       name: "Version 2",
       // logo: GalleryVerticalEnd,

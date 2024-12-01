@@ -1,12 +1,8 @@
 import { VersionProps } from "@/lib/chat/types";
 import React, { useEffect, useState } from "react";
-// import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 
 const V1: React.FC<VersionProps> = ({
-  //   user,
-  //   authLoading,
-  //   selectedChat,
   chatMessages,
   containerRef,
   inputRef,
@@ -17,7 +13,6 @@ const V1: React.FC<VersionProps> = ({
 }) => {
   const [showEnterToSubmit, setShowEnterToSubmit] = useState(false);
   const [inputAreaBottom, setInputAreaBottom] = useState(500);
-  //   const { theme } = useTheme();
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
@@ -55,7 +50,7 @@ const V1: React.FC<VersionProps> = ({
   }, [inputValue, chatMessages]);
 
   return (
-    <div className="flex-1 h-screen ">
+    <div className="h-screen">
       <div className="chat-wrapper">
         <div className="chat-container" ref={containerRef}>
           {chatMessages?.map((message, index) => (
@@ -108,7 +103,7 @@ const V1: React.FC<VersionProps> = ({
               onKeyDown={handleKeyDown}
               onChange={(e) => setInputValue(e.target.value)}
               placeholder="Type your message..."
-              className="chat-input w-[80%] rounded-xl p-4 outline-none resize-none text-muted-foreground text-lg bg-secondary"
+              className="chat-input w-full rounded-xl p-4 outline-none resize-none text-muted-foreground text-lg bg-secondary"
             />
             {showEnterToSubmit && (
               <div
@@ -154,8 +149,16 @@ const V1: React.FC<VersionProps> = ({
           width: 100%;
           height: auto;
           padding: 10px 0;
-          position: absolute;
-          z-index: 10;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .input-container {
+          width: 80%;
+          max-width: 800px;
+          margin: 0 auto;
+          position: relative;
         }
 
         .message-wrapper {
@@ -249,6 +252,10 @@ const V1: React.FC<VersionProps> = ({
           .chat-input {
             font-size: 18px;
           }
+
+          .input-container {
+            width: 95%;
+          }
         }
 
         @media only screen and (min-width: 601px) and (max-width: 1024px) {
@@ -258,6 +265,10 @@ const V1: React.FC<VersionProps> = ({
 
           .chat-input {
             font-size: 19px;
+          }
+
+          .input-container {
+            width: 90%;
           }
         }
       `}</style>
