@@ -57,19 +57,3 @@ export interface VersionProps {
   handleMessageSubmission: (query?: string) => void;
   isProcessing: boolean;
 }
-
-// export interface FormattedResponse {
-//   content: {
-//     raw: string;
-//     html: string;
-//     blocks?: {
-//       type: string;
-//       content: string;
-//     }[];
-//   };
-//   metadata: {
-//     hasCode: boolean;
-//     codeLanguages: string[];
-//     format: "markdown" | "text";
-//   };
-// }

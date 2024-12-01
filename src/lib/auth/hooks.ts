@@ -215,5 +215,8 @@ export function useLogout() {
        */
       // router.push("/chatview");
     },
+    onError: (error) => {
+      toast.error(error.message);
+    },
   });
 }

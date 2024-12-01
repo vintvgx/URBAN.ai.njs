@@ -209,8 +209,6 @@ export default function Root() {
   };
 
   const renderVersion = () => {
-    console.log("Current version:", activeVersion.version); // Add this line for debugging
-
     switch (activeVersion.version) {
       case "v1":
         return (

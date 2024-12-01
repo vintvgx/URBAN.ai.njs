@@ -93,6 +93,7 @@ export function useSendMessage() {
         }
 
         const data = await response.json();
+        console.log("🚀 ~ file: hooks.ts:100 ~ useSendMessage ~ data:", data);
         return data;
       } catch (error) {
         console.error("Error sending message:", error);

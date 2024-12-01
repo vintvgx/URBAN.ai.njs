@@ -1,6 +1,7 @@
 import { VersionProps } from "@/lib/chat/types";
 import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import RichTextRenderer from "../RichTextEditor";
 
 const V1: React.FC<VersionProps> = ({
   chatMessages,
@@ -32,6 +33,7 @@ const V1: React.FC<VersionProps> = ({
       const chatContainerHeight = containerRef.current.offsetHeight;
       const screenHeight = window.innerHeight;
 
+      // calculate the new bottom value
       let newBottomValue = screenHeight - chatContainerHeight - 250;
       if (newBottomValue > 500) newBottomValue = 500;
       if (newBottomValue < screenHeight * 0.02)
@@ -73,6 +75,12 @@ const V1: React.FC<VersionProps> = ({
                 {typeof message.content === "string"
                   ? message.content
                   : JSON.stringify(message.content)}
+                {/* {message.role === "assistant" &&
+                typeof message.content === "object" ? (
+                  <RichTextRenderer content={message.content} />
+                ) : (
+                  <p>{message.content.toString()}</p>
+                )} */}
               </div>
             </div>
           ))}
