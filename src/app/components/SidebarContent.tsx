@@ -42,6 +42,8 @@ const SidebarContent = ({
     userFont: undefined,
     assistantFont: undefined,
     typewriterEffect: false,
+    darkMode: false,
+    compactView: false,
   });
 
   // Mutation for updating settings

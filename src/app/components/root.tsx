@@ -2,6 +2,7 @@
 "use client";
 
 import * as React from "react";
+import { useState, useEffect } from "react";
 
 // UI
 import { Button } from "@/components/ui/button";
@@ -12,7 +13,7 @@ import toast, { Toaster } from "react-hot-toast";
 
 // Components
 import AuthModal from "./Auth/AuthModal";
-import { AuthHook } from "@/lib/auth/types";
+import { AuthHook, UserSettings } from "@/lib/auth/types";
 import { useAuth, useLogout } from "@/lib/auth/hooks";
 import Footer from "./Footer/Footer";
 import SidebarContent from "./SidebarContent";
@@ -24,11 +25,12 @@ import { useChatHistory, useSendMessage } from "@/lib/chat/hooks";
 import { format } from "pretty-format";
 
 // Chat Types
-import { ChatSession, IMessage } from "@/lib/chat/types";
+import { ChatSession, IMessage, InputElementType } from "@/lib/chat/types";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Separator } from "@radix-ui/react-select";
@@ -36,6 +38,8 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { version } from "os";
 import { useVersion } from "@/contexts/VersionContext";
 import Header from "@/components/Header/header";
+import { useTheme } from "next-themes";
+import V1 from "./Versions/V1";
 
 /**
  *  File defines the application's structure by laying out the Sidebar, Hedaer, MainContent & Footer.
@@ -56,7 +60,7 @@ export default function Root() {
   const [isProcessing, setIsProcessing] = React.useState(false);
 
   // Refs for input and chat bot container
-  const inputRef = React.useRef<HTMLInputElement>(null);
+  const inputRef = React.useRef<InputElementType>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   // Version Context for MainContent (chat bot) display
@@ -80,23 +84,31 @@ export default function Root() {
   // handles sending chatbot messages
   const { sendMessage, isPending, error } = useSendMessage();
 
-  // Logout hook
-  const { mutate: signOut } = useLogout();
+  // Sidebar state
+  const { state, toggleSidebar } = useSidebar();
+  const { theme, setTheme } = useTheme();
+
+  // User settings state
+  const [settings, setSettings] = useState<UserSettings>({
+    showSideBar: state === "expanded",
+    userFont: undefined,
+    assistantFont: undefined,
+    typewriterEffect: false,
+    darkMode: theme === "dark",
+    compactView: false,
+  });
+
+  // Keep settings.showSideBar in sync with sidebar state
+  useEffect(() => {
+    setSettings((prev) => ({
+      ...prev,
+      showSideBar: state === "expanded",
+      darkMode: theme === "dark",
+    }));
+  }, [state, theme]);
 
   // Combine loading states
   const isLoading = authLoading || chatLoading;
-
-  // TODO Keep for testing & delete when chat history load error is fixed
-  React.useEffect(() => {
-    console.log(
-      "Loading state: ",
-      authLoading,
-      " | ",
-      chatLoading,
-      " | ",
-      isLoading
-    );
-  }, [chatLoading, authLoading]);
 
   /**
    * Handle chat selection
@@ -197,10 +209,25 @@ export default function Root() {
   };
 
   const renderVersion = () => {
+    console.log("Current version:", activeVersion.version); // Add this line for debugging
+
     switch (activeVersion.version) {
-      case "V1":
-        return null;
-      case "V2":
+      case "v1":
+        return (
+          <V1
+            user={user}
+            authLoading={authLoading}
+            selectedChat={selectedChat}
+            chatMessages={chatMessages}
+            containerRef={containerRef}
+            inputRef={inputRef}
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+            handleMessageSubmission={handleMessageSubmission}
+            isProcessing={isProcessing}
+          />
+        );
+      case "v2":
         return (
           <V2
             user={user}
@@ -215,15 +242,59 @@ export default function Root() {
             isProcessing={isProcessing}
           />
         );
-      case "V3":
-        return null;
+      case "v3":
+        return (
+          <V2
+            user={user}
+            authLoading={authLoading}
+            selectedChat={selectedChat}
+            chatMessages={chatMessages}
+            containerRef={containerRef}
+            inputRef={inputRef}
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+            handleMessageSubmission={handleMessageSubmission}
+            isProcessing={isProcessing}
+          />
+        );
       default:
-        return null;
+        return (
+          <V2
+            user={user}
+            authLoading={authLoading}
+            selectedChat={selectedChat}
+            chatMessages={chatMessages}
+            containerRef={containerRef}
+            inputRef={inputRef}
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+            handleMessageSubmission={handleMessageSubmission}
+            isProcessing={isProcessing}
+          />
+        );
     }
   };
 
+  const handleSettingsChange = (newSettings: Partial<UserSettings>) => {
+    if ("showSideBar" in newSettings) {
+      // Use toggleSidebar if current state doesn't match desired state
+      if ((state === "expanded") !== newSettings.showSideBar) {
+        toggleSidebar();
+      }
+    }
+
+    if ("darkMode" in newSettings) {
+      setTheme(newSettings.darkMode ? "dark" : "light");
+    }
+
+    setSettings((prev) => ({
+      ...prev,
+      ...newSettings,
+    }));
+  };
+
   return (
-    <SidebarProvider className="">
+    <>
       {/* Sidebar */}
       <AppSidebar onChatSelect={handleChatSelect} />
 
@@ -244,24 +315,15 @@ export default function Root() {
         {/* Main Content (Version) */}
         <div className="flex-1 flex overflow-hidden">
           <main className="flex-1 flex flex-col">
-            <V2
-              user={user}
-              authLoading={authLoading}
-              selectedChat={selectedChat}
-              chatMessages={chatMessages}
-              containerRef={containerRef}
-              inputRef={inputRef}
-              inputValue={inputValue}
-              setInputValue={setInputValue}
-              handleMessageSubmission={handleMessageSubmission}
-              isProcessing={isProcessing}
-            />
-
+            {renderVersion()} {/* Replace <V2 .../> with this */}
             {/* Footer */}
-            <Footer signOut={signOut} />
+            <Footer
+              settings={settings}
+              onSettingsChange={handleSettingsChange}
+            />
           </main>
         </div>
       </SidebarInset>
-    </SidebarProvider>
+    </>
   );
 }

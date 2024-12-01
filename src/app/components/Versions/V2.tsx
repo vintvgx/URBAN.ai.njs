@@ -1,5 +1,5 @@
 import React from "react";
-import { ChatSession, IMessage } from "@/lib/chat/types";
+import { ChatSession, IMessage, InputElementType } from "@/lib/chat/types";
 import { cn } from "@/lib/utils";
 import RichTextRenderer from "../RichTextEditor";
 import { Button } from "@/components/ui/button";
@@ -23,7 +23,7 @@ interface V2Props {
   selectedChat: ChatSession | null;
   chatMessages: IMessage[] | null;
   containerRef: React.RefObject<HTMLDivElement>;
-  inputRef: React.RefObject<HTMLInputElement>;
+  inputRef: React.RefObject<InputElementType>;
   inputValue: string;
   setInputValue: (value: string) => void;
   handleMessageSubmission: (query?: string) => void;
@@ -124,7 +124,7 @@ const V2: React.FC<V2Props> = ({
           <div ref={containerRef} className="w-full max-w-2xl space-y-6">
             <div className="relative">
               <Input
-                ref={inputRef}
+                ref={inputRef as React.RefObject<HTMLInputElement>}
                 className="w-full text-base p-4 pr-12 bg-background border-border rounded-lg dark:bg-[#1e1e1e] dark:border-gray-800"
                 placeholder="Type your message here..."
                 value={inputValue}
@@ -173,7 +173,7 @@ const V2: React.FC<V2Props> = ({
           )}>
           <div className="relative w-10/12 max-w-2xl">
             <Input
-              ref={inputRef}
+              ref={inputRef as React.RefObject<HTMLInputElement>}
               className="w-full text-base p-4 pr-12 bg-background border-border rounded-lg dark:bg-[#1e1e1e] dark:border-gray-800"
               placeholder="Type your message here..."
               value={inputValue}
