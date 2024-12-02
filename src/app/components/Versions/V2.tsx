@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { ChatSession, IMessage, InputElementType } from "@/lib/chat/types";
 import { cn } from "@/lib/utils";
 import RichTextRenderer from "../RichTextEditor";
@@ -68,10 +68,16 @@ const V2: React.FC<V2Props> = ({
     },
   ];
 
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [chatMessages]);
+
   return (
-    <div className="flex-1 p-6 flex flex-col h-screen overflow-hidden">
+    <div className="flex-1 flex flex-col overflow-hidden">
       {chatMessages ? (
-        <div className="flex-1 space-y-4 overflow-auto max-h-[calc(100vh-12rem)] w-10/12 self-center mb-5">
+        <div className="flex-1 space-y-4 overflow-y-auto max-h-[calc(100vh-12rem)] w-10/12 self-center mb-5 scrollbar-hide">
           {chatMessages?.map((message: IMessage, index: number) => (
             <div
               key={index}
@@ -95,6 +101,7 @@ const V2: React.FC<V2Props> = ({
               </div>
             </div>
           ))}
+          <div ref={messagesEndRef} />
           {isProcessing && (
             <div className="flex justify-end">
               <ChatLoadingAnimation />
