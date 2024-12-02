@@ -69,9 +69,9 @@ const V2: React.FC<V2Props> = ({
   ];
 
   return (
-    <div className="flex-1 p-6 flex flex-col">
+    <div className="flex-1 p-6 flex flex-col h-screen overflow-hidden">
       {chatMessages ? (
-        <div className="flex-1 space-y-4 overflow-auto max-h-[calc(100vh-12rem)] w-10/12 self-center">
+        <div className="flex-1 space-y-4 overflow-auto max-h-[calc(100vh-12rem)] w-10/12 self-center mb-5">
           {chatMessages?.map((message: IMessage, index: number) => (
             <div
               key={index}
@@ -95,7 +95,11 @@ const V2: React.FC<V2Props> = ({
               </div>
             </div>
           ))}
-          {isProcessing && <ChatLoadingAnimation />}
+          {isProcessing && (
+            <div className="flex justify-end">
+              <ChatLoadingAnimation />
+            </div>
+          )}
         </div>
       ) : (
         <div
@@ -168,7 +172,7 @@ const V2: React.FC<V2Props> = ({
         <div
           ref={containerRef}
           className={cn(
-            "w-full space-y-4 transition-all duration-300 flex justify-center",
+            "w-full space-y-4 transition-all duration-300 flex justify-center sticky bottom-0 bg-background pt-4",
             chatMessages ? "opacity-100" : "opacity-0"
           )}>
           <div className="relative w-10/12 max-w-2xl">

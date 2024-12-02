@@ -345,8 +345,8 @@ export default function Root() {
 
         {/* Main Content (Version) */}
         <div className="flex-1 flex overflow-hidden">
-          <main className="flex-1 flex flex-col">
-            {renderVersion()} {/* Replace <V2 .../> with this */}
+          <main className="flex-1 flex flex-col overflow-hidden">
+            {renderVersion()}
             {/* Footer */}
             <Footer
               settings={settings}
