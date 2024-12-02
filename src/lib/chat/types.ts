@@ -1,3 +1,5 @@
+import { BaseUser } from "../auth/types";
+
 // Types
 export interface IMessage {
   role: "user" | "assistant" | "system";
@@ -40,18 +42,18 @@ export interface FormattedContent {
   };
 }
 
-// export interface FormattedResponse {
-//   content: {
-//     raw: string;
-//     html: string;
-//     blocks?: {
-//       type: string;
-//       content: string;
-//     }[];
-//   };
-//   metadata: {
-//     hasCode: boolean;
-//     codeLanguages: string[];
-//     format: "markdown" | "text";
-//   };
-// }
+export type InputElementType = HTMLInputElement | HTMLTextAreaElement;
+
+// Update the VersionProps interface
+export interface VersionProps {
+  user: BaseUser | null;
+  authLoading: boolean;
+  selectedChat: ChatSession | null;
+  chatMessages: IMessage[] | null;
+  containerRef: React.RefObject<HTMLDivElement>;
+  inputRef: React.RefObject<InputElementType>; // Updated type here
+  inputValue: string;
+  setInputValue: (value: string) => void;
+  handleMessageSubmission: (query?: string) => void;
+  isProcessing: boolean;
+}

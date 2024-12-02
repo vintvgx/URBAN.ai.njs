@@ -8,11 +8,6 @@ export const sidebarData = {
   },
   versions: [
     {
-      name: "Version 3",
-      // logo: GalleryVerticalEnd,
-      version: "v3",
-    },
-    {
       name: "Version 2",
       // logo: GalleryVerticalEnd,
       version: "v2",

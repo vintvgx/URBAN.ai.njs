@@ -2,6 +2,8 @@
 "use client";
 
 import * as React from "react";
+import { useState, useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 // UI
 import { Button } from "@/components/ui/button";
@@ -12,7 +14,7 @@ import toast, { Toaster } from "react-hot-toast";
 
 // Components
 import AuthModal from "./Auth/AuthModal";
-import { AuthHook } from "@/lib/auth/types";
+import { AuthHook, UserSettings } from "@/lib/auth/types";
 import { useAuth, useLogout } from "@/lib/auth/hooks";
 import Footer from "./Footer/Footer";
 import SidebarContent from "./SidebarContent";
@@ -20,15 +22,16 @@ import V2 from "./Versions/V2";
 
 // Functions
 import { createOrUpdateSession, getUserInitials } from "@/utils/functions";
-import { useChatHistory, useSendMessage } from "@/lib/chat/hooks";
+import { useChatHistory, useSaveConversationHistory, useSendMessage, useStoreMessage } from "@/lib/chat/hooks";
 import { format } from "pretty-format";
 
 // Chat Types
-import { ChatSession, IMessage } from "@/lib/chat/types";
+import { ChatSession, IMessage, InputElementType } from "@/lib/chat/types";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Separator } from "@radix-ui/react-select";
@@ -36,16 +39,20 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { version } from "os";
 import { useVersion } from "@/contexts/VersionContext";
 import Header from "@/components/Header/header";
-
+import { useTheme } from "next-themes";
+import V1 from "./Versions/V1";
 
 /**
  *  File defines the application's structure by laying out the Sidebar, Hedaer, MainContent & Footer.
  *  Handles application's functionality and operations (chat, auth, database)
- * 
- * @returns 
+ *
+ * @returns
  */
 
 export default function Root() {
+  // Query client for handling queries
+  const queryClient = useQueryClient();
+
   // State of chat bot conversation
   const [chatMessages, setChatMessages] = React.useState<IMessage[] | null>(
     null
@@ -57,7 +64,7 @@ export default function Root() {
   const [isProcessing, setIsProcessing] = React.useState(false);
 
   // Refs for input and chat bot container
-  const inputRef = React.useRef<HTMLInputElement>(null);
+  const inputRef = React.useRef<InputElementType>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   // Version Context for MainContent (chat bot) display
@@ -78,26 +85,46 @@ export default function Root() {
     error: chatError,
   } = useChatHistory(user?.uid ?? "");
 
-  // handles sending chatbot messages 
+  // handles sending chatbot messages
   const { sendMessage, isPending, error } = useSendMessage();
+ 
+  // Store messages in the database
+  const { saveConversationHistory } = useSaveConversationHistory();
+  // const {storeMessage} = useStoreMessage();
 
-  // Logout hook
-  const { mutate: signOut } = useLogout();
+  // Sidebar state
+  const { state, toggleSidebar } = useSidebar();
+  const { theme, setTheme } = useTheme();
+
+  // User settings state
+  const [settings, setSettings] = useState<UserSettings>({
+    showSideBar: state === "expanded",
+    userFont: undefined,
+    assistantFont: undefined,
+    typewriterEffect: false,
+    darkMode: theme === "dark",
+    compactView: false,
+  });
+
+  // Keep settings.showSideBar in sync with sidebar state
+  useEffect(() => {
+    setSettings((prev) => ({
+      ...prev,
+      showSideBar: state === "expanded",
+      darkMode: theme === "dark",
+    }));
+  }, [state, theme]);
 
   // Combine loading states
   const isLoading = authLoading || chatLoading;
 
-  // TODO Keep for testing & delete when chat history load error is fixed 
-  React.useEffect(() => {
-    console.log("Loading state: ", authLoading, " | ", chatLoading, " | ", isLoading);
-  }, [chatLoading, authLoading]);
 
-  // TODO Implement functionlaity between sidebar & MainContent to update state of chat bot when conversation is pressed 
   /**
    * Handle chat selection
    * @param chat - The chat to select
    */
   const handleChatSelect = (chat: ChatSession) => {
+    console.log("Chat selected: ", chat);
     setSelectedChat(chat);
     setChatMessages(chat.messages);
   };
@@ -111,9 +138,9 @@ export default function Root() {
   };
 
   /**
-   * Handles sending the input chat request, keeping conversation order and updating states 
-   * 
-   * @param query the string of the example query clicked 
+   * Handles sending the input chat request, keeping conversation order and updating states
+   *
+   * @param query the string of the example query clicked
    */
   const handleMessageSubmission = (query?: string) => {
     // If a query button was clicked, clear any existing input first
@@ -136,7 +163,7 @@ export default function Root() {
       const updatedConversation = chatMessages
         ? [...chatMessages, userMessage]
         : [userMessage];
-      
+
       setChatMessages(updatedConversation);
       setInputValue(""); // Clear input right away
       setIsProcessing(true); // Show loading state
@@ -149,7 +176,7 @@ export default function Root() {
         },
         {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onSuccess: (response: any) => {
+          onSuccess: async (response: any) => {
             // Create assistant message from response
             const assistantMessage: IMessage = {
               content: response,
@@ -158,12 +185,7 @@ export default function Root() {
             };
 
             // Update conversation with assistant's response
-            const completeConversation = [
-              ...updatedConversation,
-              assistantMessage,
-            ];
-
-            console.log(format(completeConversation));
+            const completeConversation = [...updatedConversation, assistantMessage];
 
             // Create or update conversation session
             const conversationSession = createOrUpdateSession(
@@ -171,15 +193,45 @@ export default function Root() {
               selectedChat,
               user?.uid
             );
+            console.log("Conversation session ID: ", conversationSession.sessionID);
+
+            // If user is authenticated, store the conversation
+            if (isAuthenticated && user?.uid) {
+              try {
+                // await storeMessage.mutateAsync({
+                //   messages: completeConversation,
+                //   userId: user.uid,
+                //   sessionID: conversationSession.sessionID,
+                // });
+                console.log("User is authenticated.Saving conversation history");
+                saveConversationHistory({
+                  messages: completeConversation,
+                  userId: user.uid,
+                  sessionID: conversationSession.sessionID,
+                },
+                {
+                  onSuccess: () => {
+                    console.log("Conversation saved successfully");
+                    // Invalidate the chatHistory query to trigger a refetch
+                    queryClient.invalidateQueries({ queryKey: ["chatHistory", user.uid] });
+                  },
+                });
+              } catch (error) {
+                console.error('Failed to store conversation:', error);
+                toast.error('Failed to save conversation');
+              }
+            }
 
             // Update state with new conversation
             setChatMessages(completeConversation);
             setIsProcessing(false);
             setSelectedChat(conversationSession);
-
-            // TODO: Persist conversation to database
           },
           onError: (error) => {
+            // Remove the failed message by getting all messages except the last one
+            const conversationWithoutFailedMessage = chatMessages?.slice(0, -1) || [];
+            setChatMessages(conversationWithoutFailedMessage);
+            
             console.error("Failed to get assistant response:", error);
             setIsProcessing(false);
             toast.error("Failed to get response. Please try again.");
@@ -191,9 +243,22 @@ export default function Root() {
 
   const renderVersion = () => {
     switch (activeVersion.version) {
-      case 'V1': 
-        return null;
-      case 'V2':
+      case "v1":
+        return (
+          <V1
+            user={user}
+            authLoading={authLoading}
+            selectedChat={selectedChat}
+            chatMessages={chatMessages}
+            containerRef={containerRef}
+            inputRef={inputRef}
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+            handleMessageSubmission={handleMessageSubmission}
+            isProcessing={isProcessing}
+          />
+        );
+      case "v2":
         return (
           <V2
             user={user}
@@ -208,19 +273,61 @@ export default function Root() {
             isProcessing={isProcessing}
           />
         );
-      case 'V3':
-        return null;
+      case "v3":
+        return (
+          <V2
+            user={user}
+            authLoading={authLoading}
+            selectedChat={selectedChat}
+            chatMessages={chatMessages}
+            containerRef={containerRef}
+            inputRef={inputRef}
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+            handleMessageSubmission={handleMessageSubmission}
+            isProcessing={isProcessing}
+          />
+        );
       default:
-        return null;
+        return (
+          <V2
+            user={user}
+            authLoading={authLoading}
+            selectedChat={selectedChat}
+            chatMessages={chatMessages}
+            containerRef={containerRef}
+            inputRef={inputRef}
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+            handleMessageSubmission={handleMessageSubmission}
+            isProcessing={isProcessing}
+          />
+        );
     }
-  }
+  };
 
+  const handleSettingsChange = (newSettings: Partial<UserSettings>) => {
+    if ("showSideBar" in newSettings) {
+      // Use toggleSidebar if current state doesn't match desired state
+      if ((state === "expanded") !== newSettings.showSideBar) {
+        toggleSidebar();
+      }
+    }
+
+    if ("darkMode" in newSettings) {
+      setTheme(newSettings.darkMode ? "dark" : "light");
+    }
+
+    setSettings((prev) => ({
+      ...prev,
+      ...newSettings,
+    }));
+  };
 
   return (
-    <SidebarProvider className="">
+    <>
       {/* Sidebar */}
-      <AppSidebar />
-
+      <AppSidebar onChatSelect={handleChatSelect} />
 
       <SidebarInset>
         <div>
@@ -234,29 +341,20 @@ export default function Root() {
           authLoading={authLoading}
           isAuthenticated={isAuthenticated}
           user={user}
-          />
-    
-          {/* Main Content (Version) */}
+        />
+
+        {/* Main Content (Version) */}
         <div className="flex-1 flex overflow-hidden">
           <main className="flex-1 flex flex-col">
-            <V2
-              user={user}
-              authLoading={authLoading}
-              selectedChat={selectedChat}
-              chatMessages={chatMessages}
-              containerRef={containerRef}
-              inputRef={inputRef}
-              inputValue={inputValue}
-              setInputValue={setInputValue}
-              handleMessageSubmission={handleMessageSubmission}
-              isProcessing={isProcessing}
-            />
-
+            {renderVersion()} {/* Replace <V2 .../> with this */}
             {/* Footer */}
-            <Footer signOut={signOut} />
+            <Footer
+              settings={settings}
+              onSettingsChange={handleSettingsChange}
+            />
           </main>
         </div>
       </SidebarInset>
-    </SidebarProvider>
+    </>
   );
 }

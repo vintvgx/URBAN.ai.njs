@@ -84,7 +84,9 @@ export interface UserSettings {
   showSideBar: boolean;
   userFont: string | undefined;
   assistantFont: string | undefined;
-  typewriterEffect: boolean; // T: output responses in typerwriter effect F: use loading animation while response is being retrieved
+  typewriterEffect: boolean;
+  darkMode: boolean;
+  compactView: boolean;
 }
 
 // Type guard functions to check auth type

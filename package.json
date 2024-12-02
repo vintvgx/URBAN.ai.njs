@@ -32,6 +32,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "firebase": "^11.0.1",
+    "html-react-parser": "^5.1.18",
     "isomorphic-dompurify": "^2.16.0",
     "lucide-react": "^0.454.0",
     "marked": "^14.1.3",

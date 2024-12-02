@@ -1,5 +1,3 @@
-import AuthModal from "@/app/components/Auth/AuthModal";
-import { getUserInitials } from "@/utils/functions";
 import React from "react";
 import { ThemeToggle } from "../theme-toggle";
 import { Button } from "../ui/button";
@@ -18,9 +16,9 @@ export interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({
   selectedChat,
   handleNewChat,
-  authLoading,
-  isAuthenticated,
-  user,
+  // authLoading,
+  // isAuthenticated,
+  // user,
 }) => {
   return (
     <header className="border-b px-4 py-3 flex items-center justify-between">

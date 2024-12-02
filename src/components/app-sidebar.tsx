@@ -15,27 +15,18 @@ import {
 } from "@/components/ui/sidebar";
 import { useChatHistory } from "@/lib/chat/hooks";
 import { AuthHook } from "@/lib/auth/types";
-import { IMessage, ChatSession } from "@/lib/chat/types";
+import { ChatSession } from "@/lib/chat/types";
 import { useAuth } from "@/lib/auth/hooks";
 
-// This is sample data.
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  onChatSelect: (chat: ChatSession) => void;
+}
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  // State of sidebar and input
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [chatMessages, setChatMessages] = React.useState<IMessage[] | null>(
-    null
-  );
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [selectedChat, setSelectedChat] = React.useState<ChatSession | null>(
-    null
-  );
-
+export function AppSidebar({ onChatSelect, ...props }: AppSidebarProps) {
   // Global User Auth State
   const {
     user,
     isAuthenticated,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isLoading: authLoading,
   } = useAuth() as AuthHook;
 
@@ -46,15 +37,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     error: chatError,
   } = useChatHistory(user?.uid ?? "");
 
-  /**
-   * Handle chat selection
-   * @param chat - The chat to select
-   */
-  const handleChatSelect = (chat: ChatSession) => {
-    setSelectedChat(chat);
-    setChatMessages(chat.messages);
-  };
-
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -63,15 +45,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain
           chatHistory={chatHistory}
-          onChatSelect={handleChatSelect}
+          onChatSelect={onChatSelect}
           isAuthenticated={isAuthenticated}
           chatLoading={chatLoading}
           chatError={chatError}
         />
-        {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={user} authLoading={authLoading} isAuthenticated={isAuthenticated} />
+        <NavUser
+          user={user}
+          authLoading={authLoading}
+          isAuthenticated={isAuthenticated}
+        />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

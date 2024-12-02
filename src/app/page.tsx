@@ -1,3 +1,4 @@
+import { SidebarProvider } from "@/components/ui/sidebar";
 import Root from "./components/root";
 
 /**
@@ -11,7 +12,9 @@ import Root from "./components/root";
 export default function Home() {
   return (
     <div>
-      <Root />
+      <SidebarProvider>
+        <Root />
+      </SidebarProvider>
     </div>
   );
 }
