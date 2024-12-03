@@ -61,7 +61,7 @@ const V1: React.FC<VersionProps> = ({
       };
       chatContainerRef.current.scrollTo(scrollOptions);
     }
-  }, [chatMessages, isProcessing]);
+  }, [chatContainerRef, chatMessages, isProcessing]);
 
   return (
     <div className="flex-1">

@@ -40,8 +40,8 @@ export function AppSidebar({ onChatSelect, ...props }: AppSidebarProps) {
 
   const {
     deleteMessage,
-    isPending: deleteMessagePending,
-    error: deleteMessageError,
+    // isPending: deleteMessagePending,
+    // error: deleteMessageError,
   } = useDeleteMessage();
 
   const handleDeleteMessage = (sessionID: string, userId: string) => {

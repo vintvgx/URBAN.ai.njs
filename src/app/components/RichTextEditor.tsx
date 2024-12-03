@@ -1,7 +1,7 @@
 import React from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
-import parse, { domToReact, HTMLReactParserOptions } from 'html-react-parser';
+import parse, { DOMNode, domToReact, HTMLReactParserOptions } from 'html-react-parser';
 
 interface FormattedContent {
   content: {
@@ -25,11 +25,12 @@ interface FormattedContent {
  */
 const RichTextRenderer = ({ content }: { content: FormattedContent }) => {
   const options: HTMLReactParserOptions = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     replace: (domNode: any) => {
       if (domNode.type === 'tag') {
         // Remove text nodes that only contain whitespace/newlines
-        const children = domNode.children?.filter((child: any) => 
-          !(child.type === 'text' && child.data.trim() === '')
+        const children = domNode.children?.filter((child: DOMNode) => 
+          !(child.type === 'text' && 'data' in child && child.data.trim() === '')
         );
 
         switch (domNode.name) {
