@@ -20,7 +20,7 @@ export async function GET(request, { params }) {
     const conversations = await db
       .collection("chatMessages")
       .find({ user_id: userId })
-      .sort({ "messages.timestamp": -1 })
+      .sort({ "messages.timestamp": 1 })
       .toArray();
 
     const chatHistory = conversations.map((conv) => ({

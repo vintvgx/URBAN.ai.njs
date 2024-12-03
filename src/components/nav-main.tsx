@@ -9,7 +9,7 @@ import {
 import { ChatSession } from "@/lib/chat/types";
 import { formatDate, getFirstMessage } from "@/utils/functions";
 import { cn } from "@/lib/utils";
-import { Trash2 } from "lucide-react";
+// import { Trash2 } from "lucide-react";
 
 export function NavMain({
   chatHistory,
@@ -17,8 +17,8 @@ export function NavMain({
   isAuthenticated,
   chatLoading,
   chatError,
-  userId,
-  handleDeleteMessage,
+  // userId,
+  //handleDeleteMessage,
   // deleteMessagePending,
   // deleteMessageError,
 }: {
@@ -27,7 +27,7 @@ export function NavMain({
   isAuthenticated: boolean;
   chatLoading: boolean;
   chatError: Error | null;
-  userId: string;
+  // userId,
   handleDeleteMessage: (sessionID: string, userId: string) => void;
   // deleteMessagePending: boolean;
   // deleteMessageError: Error | null;

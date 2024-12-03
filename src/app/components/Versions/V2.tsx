@@ -38,7 +38,7 @@ const V2: React.FC<VersionProps> = ({
       };
       chatContainerRef.current.scrollTo(scrollOptions);
     }
-  }, [chatMessages, isProcessing]);
+  }, [chatContainerRef, chatMessages, isProcessing]);
 
   const exampleQueries = [
     {
