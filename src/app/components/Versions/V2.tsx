@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { ChatSession, IMessage, InputElementType } from "@/lib/chat/types";
+import { IMessage,  VersionProps } from "@/lib/chat/types";
 import { cn } from "@/lib/utils";
 import RichTextRenderer from "../RichTextEditor";
 import { Button } from "@/components/ui/button";
@@ -13,25 +13,11 @@ import {
   Activity,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { BaseUser } from "@/lib/auth/types";
 import ChatLoadingAnimation from "../Chat/ChatLoadingAnimation";
 import AuthLoadingAnimation from "../Auth/AuthLoadingAnimation";
 
-interface V2Props {
-  user: BaseUser | null;
-  authLoading: boolean;
-  selectedChat: ChatSession | null;
-  chatMessages: IMessage[] | null;
-  containerRef: React.RefObject<HTMLDivElement>;
-  chatContainerRef: React.RefObject<HTMLDivElement>; // New ref for chat container
-  inputRef: React.RefObject<InputElementType>;
-  inputValue: string;
-  setInputValue: (value: string) => void;
-  handleMessageSubmission: (query?: string) => void;
-  isProcessing: boolean;
-}
 
-const V2: React.FC<V2Props> = ({
+const V2: React.FC<VersionProps> = ({
   user,
   authLoading,
   chatMessages,
@@ -43,7 +29,7 @@ const V2: React.FC<V2Props> = ({
   handleMessageSubmission,
   isProcessing,
 }) => {
-  // Add scroll effect when messages change
+  // Auto scroll to bottom of chat container when messages change
   useEffect(() => {
     if (chatContainerRef.current) {
       const scrollOptions = {

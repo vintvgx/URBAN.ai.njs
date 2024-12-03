@@ -253,6 +253,7 @@ export default function Root() {
             selectedChat={selectedChat}
             chatMessages={chatMessages}
             containerRef={containerRef}
+            chatContainerRef={chatContainerRef}
             inputRef={inputRef}
             inputValue={inputValue}
             setInputValue={setInputValue}
