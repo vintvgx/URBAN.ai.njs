@@ -146,6 +146,35 @@ export function useStoreMessage() {
 }
 
 /**
+ * Hook to delete a message from the database
+ */
+export function useDeleteMessage() {
+  const { mutate, isPending, error } = useMutation({
+    mutationFn: async ({ sessionID, userId }: { sessionID: string; userId: string }) => {
+      const response = await fetch('/api/delete-message', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ sessionID, userId }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete message');
+      }
+
+      return response.json();
+    },
+  });
+
+  return {
+    deleteMessage: mutate,
+    isPending,
+    error,
+  };
+}
+
+/**
  * Hook to save user conversation history to the database
  * @param messages - The messages to save
  * @param userId - The user ID to save the messages for
