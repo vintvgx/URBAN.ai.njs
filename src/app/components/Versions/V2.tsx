@@ -71,7 +71,7 @@ const V2: React.FC<V2Props> = ({
   return (
     <div className="flex-1 p-6 flex flex-col">
       {chatMessages ? (
-        <div className="flex-1 space-y-4 overflow-auto max-h-[calc(100vh-12rem)] w-10/12 self-center">
+        <div className="flex-1 space-y-4 overflow-auto max-h-[calc(100vh-15rem)] w-10/12 self-center">
           {chatMessages?.map((message: IMessage, index: number) => (
             <div
               key={index}
@@ -168,7 +168,8 @@ const V2: React.FC<V2Props> = ({
         <div
           ref={containerRef}
           className={cn(
-            "w-full space-y-4 transition-all duration-300 flex justify-center",
+            "w-full space-y-4 transition-all duration-300 flex justify-center  mt-4",
+
             chatMessages ? "opacity-100" : "opacity-0"
           )}>
           <div className="relative w-10/12 max-w-2xl">

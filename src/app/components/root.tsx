@@ -99,11 +99,11 @@ export default function Root() {
   // User settings state
   const [settings, setSettings] = useState<UserSettings>({
     showSideBar: state === "expanded",
-    userFont: undefined,
+    font: undefined,
     assistantFont: undefined,
     typewriterEffect: false,
     darkMode: theme === "dark",
-    compactView: false,
+    uploadToDatabase: false,
   });
 
   // Keep settings.showSideBar in sync with sidebar state
@@ -325,7 +325,7 @@ export default function Root() {
   };
 
   return (
-    <>
+    <div className="flex flex-1 sticky ">
       {/* Sidebar */}
       <AppSidebar onChatSelect={handleChatSelect} />
 
@@ -350,11 +350,12 @@ export default function Root() {
             {/* Footer */}
             <Footer
               settings={settings}
+              user={user}
               onSettingsChange={handleSettingsChange}
             />
           </main>
         </div>
       </SidebarInset>
-    </>
+    </div>
   );
 }
