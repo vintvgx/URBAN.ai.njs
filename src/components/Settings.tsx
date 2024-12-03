@@ -17,10 +17,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SlidersHorizontal } from "lucide-react";
-import { UserSettings } from "@/lib/auth/types";
+import { UserData, UserSettings } from "@/lib/auth/types";
 
 interface SettingsModalProps {
   settings: UserSettings;
+  user: UserData | null;
   onSettingsChange: (settings: Partial<UserSettings>) => void;
 }
 
@@ -28,6 +29,7 @@ const fontOptions = ["Arial", "Arial Black", "Mono", "System Default"];
 
 export function SettingsModal({
   settings,
+  user,
   onSettingsChange,
 }: SettingsModalProps) {
   return (
@@ -75,22 +77,22 @@ export function SettingsModal({
             />
           </div>
 
-          <div className="flex items-center justify-between">
-            <Label htmlFor="compactView">Compact View</Label>
+          {user && <div className="flex items-center justify-between">
+            <Label htmlFor="uploadToDatabase">Upload to Database</Label>
             <Switch
-              id="compactView"
-              checked={settings.compactView}
+              id="uploadToDatabase"
+              checked={settings.uploadToDatabase}
               onCheckedChange={(checked) =>
-                onSettingsChange({ compactView: checked })
+                onSettingsChange({ uploadToDatabase: checked })
               }
             />
-          </div>
+          </div>}
 
           <div className="space-y-2">
-            <Label>User Font</Label>
+            <Label>Font</Label>
             <Select
-              value={settings.userFont}
-              onValueChange={(value) => onSettingsChange({ userFont: value })}>
+              value={settings.font}
+              onValueChange={(value) => onSettingsChange({ font: value })}>
               <SelectTrigger>
                 <SelectValue placeholder="Select font" />
               </SelectTrigger>
@@ -104,7 +106,7 @@ export function SettingsModal({
             </Select>
           </div>
 
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <Label>Assistant Font</Label>
             <Select
               value={settings.assistantFont}
@@ -122,7 +124,7 @@ export function SettingsModal({
                 ))}
               </SelectContent>
             </Select>
-          </div>
+          </div> */}
         </div>
       </DialogContent>
     </Dialog>

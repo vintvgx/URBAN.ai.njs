@@ -66,6 +66,8 @@ export default function Root() {
   // Refs for input and chat bot container
   const inputRef = React.useRef<InputElementType>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
+  const chatContainerRef = React.useRef<HTMLDivElement>(null);
+
 
   // Version Context for MainContent (chat bot) display
   const { activeVersion } = useVersion();
@@ -99,11 +101,11 @@ export default function Root() {
   // User settings state
   const [settings, setSettings] = useState<UserSettings>({
     showSideBar: state === "expanded",
-    userFont: undefined,
+    font: undefined,
     assistantFont: undefined,
     typewriterEffect: false,
     darkMode: theme === "dark",
-    compactView: false,
+    uploadToDatabase: false,
   });
 
   // Keep settings.showSideBar in sync with sidebar state
@@ -251,6 +253,7 @@ export default function Root() {
             selectedChat={selectedChat}
             chatMessages={chatMessages}
             containerRef={containerRef}
+            chatContainerRef={chatContainerRef}
             inputRef={inputRef}
             inputValue={inputValue}
             setInputValue={setInputValue}
@@ -266,6 +269,7 @@ export default function Root() {
             selectedChat={selectedChat}
             chatMessages={chatMessages}
             containerRef={containerRef}
+            chatContainerRef={chatContainerRef}
             inputRef={inputRef}
             inputValue={inputValue}
             setInputValue={setInputValue}
@@ -280,6 +284,7 @@ export default function Root() {
             authLoading={authLoading}
             selectedChat={selectedChat}
             chatMessages={chatMessages}
+            chatContainerRef={chatContainerRef}
             containerRef={containerRef}
             inputRef={inputRef}
             inputValue={inputValue}
@@ -296,6 +301,7 @@ export default function Root() {
             selectedChat={selectedChat}
             chatMessages={chatMessages}
             containerRef={containerRef}
+            chatContainerRef={chatContainerRef}
             inputRef={inputRef}
             inputValue={inputValue}
             setInputValue={setInputValue}
@@ -325,7 +331,7 @@ export default function Root() {
   };
 
   return (
-    <>
+    <div className="flex flex-1 sticky h-screen">
       {/* Sidebar */}
       <AppSidebar onChatSelect={handleChatSelect} />
 
@@ -350,11 +356,12 @@ export default function Root() {
             {/* Footer */}
             <Footer
               settings={settings}
+              user={user}
               onSettingsChange={handleSettingsChange}
             />
           </main>
         </div>
       </SidebarInset>
-    </>
+    </div>
   );
 }

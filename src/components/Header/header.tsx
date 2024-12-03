@@ -16,9 +16,6 @@ export interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({
   selectedChat,
   handleNewChat,
-  // authLoading,
-  // isAuthenticated,
-  // user,
 }) => {
   return (
     <header className="border-b px-4 py-3 flex items-center justify-between">
@@ -35,34 +32,6 @@ const Header: React.FC<HeaderProps> = ({
       </div>
       <div className="flex items-center gap-2">
         <ThemeToggle />
-        {/* {authLoading ? (
-              <div className="animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full" />
-            ) : user && isAuthenticated ? (
-              <div className="user-avatar">
-                <span className="text-base font-extralight tracking-wide">
-                  {getUserInitials(user?.displayName)}
-                </span>
-              </div>
-            ) : (
-              <>
-                <AuthModal
-                  defaultView="login"
-                  trigger={
-                    <Button variant="ghost" size="sm" className="gap-2">
-                      LOG IN
-                    </Button>
-                  }
-                />
-                <AuthModal
-                  defaultView="signup"
-                  trigger={
-                    <Button variant="ghost" size="sm" className="gap-2">
-                      SIGN UP
-                    </Button>
-                  }
-                />
-              </>
-            )} */}
       </div>
     </header>
   );

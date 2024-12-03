@@ -9,6 +9,7 @@ import {
 import { ChatSession } from "@/lib/chat/types";
 import { formatDate, getFirstMessage } from "@/utils/functions";
 import { cn } from "@/lib/utils";
+import { Trash2 } from "lucide-react";
 
 export function NavMain({
   chatHistory,
@@ -16,14 +17,23 @@ export function NavMain({
   isAuthenticated,
   chatLoading,
   chatError,
+  userId,
+  handleDeleteMessage,
+  // deleteMessagePending,
+  // deleteMessageError,
 }: {
   chatHistory: ChatSession[];
   onChatSelect: (chat: ChatSession) => void;
   isAuthenticated: boolean;
   chatLoading: boolean;
   chatError: Error | null;
+  userId: string;
+  handleDeleteMessage: (sessionID: string, userId: string) => void;
+  // deleteMessagePending: boolean;
+  // deleteMessageError: Error | null;
 }) {
   const { state } = useSidebar();
+
 
   const renderContent = () => {
     if (chatLoading) {
@@ -99,14 +109,25 @@ export function NavMain({
               return (
                 <div
                   key={chat.sessionID}
-                  className="p-3 rounded-lg border hover:bg-accent cursor-pointer transition-colors"
-                  onClick={() => onChatSelect?.(chat)}>
+                  className="group p-3 rounded-lg border hover:bg-accent cursor-pointer transition-colors relative"
+                  onClick={(e) => {
+                    if (!(e.target as HTMLElement).closest('.delete-button')) {
+                      onChatSelect?.(chat);
+                    }
+                  }}>
                   <div className="flex flex-col gap-1">
                     <p className="text-sm truncate">{getFirstMessage(chat)}</p>
                     <p className="text-sm font-medium text-muted-foreground">
                       {date} at {time}
                     </p>
                   </div>
+                  {/* //TODO Update button to only be displayed on active element */}
+                  {/* <button
+                    className="delete-button absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-accent-foreground/10 rounded"
+                    onClick={() => handleDeleteMessage(chat.sessionID, userId)}
+                    aria-label="Delete conversation">
+                    <Trash2 className="h-4 w-4 text-muted-foreground hover:text-red-500 transition-colors" />
+                  </button> */}
                 </div>
               );
             })}

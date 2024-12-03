@@ -51,6 +51,7 @@ export interface VersionProps {
   selectedChat: ChatSession | null;
   chatMessages: IMessage[] | null;
   containerRef: React.RefObject<HTMLDivElement>;
+  chatContainerRef: React.RefObject<HTMLDivElement>; // New ref for chat container
   inputRef: React.RefObject<InputElementType>; // Updated type here
   inputValue: string;
   setInputValue: (value: string) => void;

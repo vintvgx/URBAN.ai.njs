@@ -82,11 +82,11 @@ export interface EmailAuthData extends UserData {
 
 export interface UserSettings {
   showSideBar: boolean;
-  userFont: string | undefined;
+  font: string | undefined;
   assistantFont: string | undefined;
   typewriterEffect: boolean;
   darkMode: boolean;
-  compactView: boolean;
+  uploadToDatabase: boolean;
 }
 
 // Type guard functions to check auth type

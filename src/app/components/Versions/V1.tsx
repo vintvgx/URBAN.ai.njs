@@ -6,6 +6,7 @@ import RichTextRenderer from "../RichTextEditor";
 const V1: React.FC<VersionProps> = ({
   chatMessages,
   containerRef,
+  chatContainerRef,
   inputRef,
   inputValue,
   setInputValue,
@@ -26,7 +27,7 @@ const V1: React.FC<VersionProps> = ({
     if (containerRef.current) {
       containerRef.current.scrollTop = containerRef.current.scrollHeight;
     }
-  }, [chatMessages, isProcessing]);
+  }, [chatMessages, containerRef, isProcessing]);
 
   useEffect(() => {
     if (containerRef.current) {
@@ -41,15 +42,26 @@ const V1: React.FC<VersionProps> = ({
 
       setInputAreaBottom(newBottomValue);
     }
-  }, [chatMessages, isProcessing]);
+  }, [chatMessages, containerRef, isProcessing]);
 
   useEffect(() => {
-    if (!chatMessages && inputValue.length > 2) {
+    if ( inputValue.length > 2) {
       setShowEnterToSubmit(true);
     } else {
       setShowEnterToSubmit(false);
     }
   }, [inputValue, chatMessages]);
+
+  // Auto scroll to bottom of chat container when messages change
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      const scrollOptions = {
+        top: chatContainerRef.current.scrollHeight,
+        behavior: "smooth" as ScrollBehavior,
+      };
+      chatContainerRef.current.scrollTo(scrollOptions);
+    }
+  }, [chatMessages, isProcessing]);
 
   return (
     <div className="flex-1">
@@ -58,6 +70,7 @@ const V1: React.FC<VersionProps> = ({
           {chatMessages?.map((message, index) => (
             <div
               key={index}
+              ref={chatContainerRef}
               className={cn(
                 "message-wrapper",
                 message.role === "user"
@@ -97,12 +110,12 @@ const V1: React.FC<VersionProps> = ({
           )}
         </div>
         <div
-          className="input-area"
+          className="input-area "
           style={{
             position: "absolute",
             bottom: `${inputAreaBottom}px`,
           }}>
-          <div className="input-container">
+          <div className="input-container ">
             <textarea
               ref={inputRef as React.RefObject<HTMLTextAreaElement>}
               autoFocus
@@ -156,7 +169,6 @@ const V1: React.FC<VersionProps> = ({
         .input-area {
           width: 100%;
           height: auto;
-          padding: 10px 0;
           display: flex;
           justify-content: center;
           align-items: center;
