@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import ChatLoadingAnimation from "../Chat/ChatLoadingAnimation";
 import AuthLoadingAnimation from "../Auth/AuthLoadingAnimation";
+import TypewriterEffect from "@/components/Chat/TypewriterEffect";
 
 
 const V2: React.FC<VersionProps> = ({
@@ -28,6 +29,7 @@ const V2: React.FC<VersionProps> = ({
   setInputValue,
   handleMessageSubmission,
   isProcessing,
+  settings,
 }) => {
   // Auto scroll to bottom of chat container when messages change
   useEffect(() => {
@@ -87,12 +89,16 @@ const V2: React.FC<VersionProps> = ({
                     ? "user-message"
                     : "bot-message bg-muted ml-auto"
                 )}>
-                {message.role === "assistant" &&
-                typeof message.content === "object" ? (
-                  <RichTextRenderer content={message.content} />
+                {message.role === "assistant" && typeof message.content === "object" ? (
+                  settings?.typewriterEffect ? (
+                    <TypewriterEffect content={message.content} />
+                  ) : (
+                    <RichTextRenderer content={message.content} />
+                  )
                 ) : (
                   <p>{message.content.toString()}</p>
-                )}
+                  )
+                }
               </div>
             </div>
           ))}

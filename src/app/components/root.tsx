@@ -103,7 +103,7 @@ export default function Root() {
     showSideBar: state === "expanded",
     font: undefined,
     assistantFont: undefined,
-    typewriterEffect: false,
+    typewriterEffect: true,
     darkMode: theme === "dark",
     uploadToDatabase: false,
   });
@@ -140,10 +140,23 @@ export default function Root() {
   };
 
   /**
-   * Handles sending the input chat request, keeping conversation order and updating states
-   *
-   * @param query the string of the example query clicked
-   */
+ * Handles sending the input chat request while managing conversation state and error recovery.
+ * 
+ * Functionality:
+ * - Processes either direct input or example query clicks
+ * - Creates and adds user message to conversation immediately
+ * - Sends message to OpenAI and handles response
+ * - Updates conversation with assistant response on success
+ * - Creates/updates conversation session
+ * - Saves conversation history for authenticated users
+ * - Handles errors by:
+ *   - Removing failed message from conversation
+ *   - Restoring failed message text to input
+ *   - Showing error toast to user
+ * - Manages loading states and input clearing
+ *
+ * @param query Optional string for example queries clicked by user
+ */
   const handleMessageSubmission = (query?: string) => {
     // If a query button was clicked, clear any existing input first
     if (query) {
@@ -152,6 +165,9 @@ export default function Root() {
 
     // the chosen query takes precedence if it exists & if not, set text to inputValue (trim white spaces)
     const messageText = query || inputValue.trim();
+
+     // Store the current state before making any changes
+     const previousState = chatMessages ? [...chatMessages] : [];
 
     if (messageText) {
       // Create user message object
@@ -186,8 +202,12 @@ export default function Root() {
               timestamp: new Date().toISOString(),
             };
 
+            console.log(`Response sent, ${response}`)
+
             // Update conversation with assistant's response
             const completeConversation = [...updatedConversation, assistantMessage];
+
+            console.log(`Complete Convo, ${completeConversation}`)
 
             // Create or update conversation session
             const conversationSession = createOrUpdateSession(
@@ -200,11 +220,6 @@ export default function Root() {
             // If user is authenticated, store the conversation
             if (isAuthenticated && user?.uid) {
               try {
-                // await storeMessage.mutateAsync({
-                //   messages: completeConversation,
-                //   userId: user.uid,
-                //   sessionID: conversationSession.sessionID,
-                // });
                 console.log("User is authenticated.Saving conversation history");
                 saveConversationHistory({
                   messages: completeConversation,
@@ -230,12 +245,14 @@ export default function Root() {
             setSelectedChat(conversationSession);
           },
           onError: (error) => {
-            // Remove the failed message by getting all messages except the last one
-            const conversationWithoutFailedMessage = chatMessages?.slice(0, -1) || [];
-            setChatMessages(conversationWithoutFailedMessage);
+            console.log("Error");
+            
+            // Restore to previous state 
+            setChatMessages(previousState);
+            setInputValue(messageText);
+            setIsProcessing(false);
             
             console.error("Failed to get assistant response:", error);
-            setIsProcessing(false);
             toast.error("Failed to get response. Please try again.");
           },
         }
@@ -275,6 +292,8 @@ export default function Root() {
             setInputValue={setInputValue}
             handleMessageSubmission={handleMessageSubmission}
             isProcessing={isProcessing}
+            settings={settings}
+
           />
         );
       case "v3":
