@@ -44,3 +44,7 @@ PROJECT TODOS
 - add pending assitant response animation to chat
 - 11/8
 - 11/20
+- 12/7
+
+
+DEPLOYING ON 12/8
