@@ -47,5 +47,6 @@ PROJECT TODOS
 - 12/7
 - 12/8
 - 12/9
+- 12/10
 
 DEPLOYING ON 12/8 (maybe 12/9)
