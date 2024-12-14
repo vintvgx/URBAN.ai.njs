@@ -1,4 +1,4 @@
-import { BaseUser } from "../auth/types";
+import { BaseUser, UserSettings } from "../auth/types";
 
 // Types
 export interface IMessage {
@@ -57,4 +57,5 @@ export interface VersionProps {
   setInputValue: (value: string) => void;
   handleMessageSubmission: (query?: string) => void;
   isProcessing: boolean;
+  settings?: UserSettings;
 }
