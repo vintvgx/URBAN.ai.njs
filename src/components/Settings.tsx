@@ -1,4 +1,3 @@
-import React from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -9,15 +8,8 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { SlidersHorizontal } from "lucide-react";
 import { UserData, UserSettings } from "@/lib/auth/types";
+import { SlidersHorizontal } from "lucide-react";
 
 interface SettingsModalProps {
   settings: UserSettings;
@@ -25,7 +17,7 @@ interface SettingsModalProps {
   onSettingsChange: (settings: Partial<UserSettings>) => void;
 }
 
-const fontOptions = ["Arial", "Arial Black", "Mono", "System Default"];
+// const fontOptions = ["Arial", "Arial Black", "Mono", "System Default"];
 
 export function SettingsModal({
   settings,
@@ -88,31 +80,12 @@ export function SettingsModal({
             />
           </div>}
 
-          <div className="space-y-2">
+          {/* TODO Implement FONT SELECTION */}
+          {/* <div className="space-y-2">
             <Label>Font</Label>
             <Select
               value={settings.font}
               onValueChange={(value) => onSettingsChange({ font: value })}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select font" />
-              </SelectTrigger>
-              <SelectContent>
-                {fontOptions.map((font) => (
-                  <SelectItem key={font} value={font}>
-                    {font}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* <div className="space-y-2">
-            <Label>Assistant Font</Label>
-            <Select
-              value={settings.assistantFont}
-              onValueChange={(value) =>
-                onSettingsChange({ assistantFont: value })
-              }>
               <SelectTrigger>
                 <SelectValue placeholder="Select font" />
               </SelectTrigger>

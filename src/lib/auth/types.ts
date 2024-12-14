@@ -83,7 +83,6 @@ export interface EmailAuthData extends UserData {
 export interface UserSettings {
   showSideBar: boolean;
   font: string | undefined;
-  assistantFont: string | undefined;
   typewriterEffect: boolean;
   darkMode: boolean;
   uploadToDatabase: boolean;
