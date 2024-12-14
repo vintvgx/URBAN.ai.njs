@@ -1,44 +1,32 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import * as React from "react";
-import { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import * as React from "react";
+import { useEffect, useState } from "react";
 
 // UI
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { cn } from "@/lib/utils";
-import { Menu, Power } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 
 // Components
-import AuthModal from "./Auth/AuthModal";
+import { useAuth } from "@/lib/auth/hooks";
 import { AuthHook, UserSettings } from "@/lib/auth/types";
-import { useAuth, useLogout } from "@/lib/auth/hooks";
 import Footer from "./Footer/Footer";
-import SidebarContent from "./SidebarContent";
 import V2 from "./Versions/V2";
 
 // Functions
-import { createOrUpdateSession, getUserInitials } from "@/utils/functions";
-import { useChatHistory, useSaveConversationHistory, useSendMessage, useStoreMessage } from "@/lib/chat/hooks";
-import { format } from "pretty-format";
+import { useChatHistory, useSaveConversationHistory, useSendMessage } from "@/lib/chat/hooks";
+import { createOrUpdateSession } from "@/utils/functions";
 
 // Chat Types
-import { ChatSession, IMessage, InputElementType } from "@/lib/chat/types";
+import { AppSidebar } from "@/components/app-sidebar";
+import Header from "@/components/Header/header";
 import {
   SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-  useSidebar,
+  useSidebar
 } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
-import { Separator } from "@radix-ui/react-select";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { version } from "os";
 import { useVersion } from "@/contexts/VersionContext";
-import Header from "@/components/Header/header";
+import { ChatSession, IMessage, InputElementType } from "@/lib/chat/types";
 import { useTheme } from "next-themes";
 import V1 from "./Versions/V1";
 
@@ -102,7 +90,6 @@ export default function Root() {
   const [settings, setSettings] = useState<UserSettings>({
     showSideBar: state === "expanded",
     font: undefined,
-    assistantFont: undefined,
     typewriterEffect: false,
     darkMode: theme === "dark",
     uploadToDatabase: false,
@@ -206,18 +193,20 @@ export default function Root() {
                 //   sessionID: conversationSession.sessionID,
                 // });
                 console.log("User is authenticated.Saving conversation history");
-                saveConversationHistory({
-                  messages: completeConversation,
-                  userId: user.uid,
-                  sessionID: conversationSession.sessionID,
-                },
-                {
-                  onSuccess: () => {
-                    console.log("Conversation saved successfully");
-                    // Invalidate the chatHistory query to trigger a refetch
-                    queryClient.invalidateQueries({ queryKey: ["chatHistory", user.uid] });
+                if (settings.uploadToDatabase) {
+                  saveConversationHistory({
+                    messages: completeConversation,
+                    userId: user.uid,
+                    sessionID: conversationSession.sessionID,
                   },
-                });
+                  {
+                    onSuccess: () => {
+                      console.log("Conversation saved successfully");
+                      // Invalidate the chatHistory query to trigger a refetch
+                      queryClient.invalidateQueries({ queryKey: ["chatHistory", user.uid] });
+                    },
+                  });
+                }
               } catch (error) {
                 console.error('Failed to store conversation:', error);
                 toast.error('Failed to save conversation');
