@@ -92,7 +92,7 @@ export default function Root() {
     font: undefined,
     typewriterEffect: false,
     darkMode: theme === "dark",
-    uploadToDatabase: false,
+    uploadToDatabase: true,
   });
 
   // Keep settings.showSideBar in sync with sidebar state
