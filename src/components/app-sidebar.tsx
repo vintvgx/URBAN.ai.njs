@@ -74,7 +74,8 @@ export function AppSidebar({ onChatSelect, ...props }: AppSidebarProps) {
           chatLoading={chatLoading}
           chatError={chatError}
           handleDeleteMessage={handleDeleteMessage}
-          userId={user?.uid ?? ""}
+          authLoading={authLoading}
+          // userId={user?.uid ?? ""}
         />
       </SidebarContent>
       <SidebarFooter>
