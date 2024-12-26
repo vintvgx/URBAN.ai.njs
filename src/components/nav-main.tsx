@@ -17,6 +17,7 @@ export function NavMain({
   isAuthenticated,
   chatLoading,
   chatError,
+  authLoading,
   // userId,
   //handleDeleteMessage,
   // deleteMessagePending,
@@ -27,6 +28,7 @@ export function NavMain({
   isAuthenticated: boolean;
   chatLoading: boolean;
   chatError: Error | null;
+  authLoading: boolean;
   // userId,
   handleDeleteMessage: (sessionID: string, userId: string) => void;
   // deleteMessagePending: boolean;
@@ -36,15 +38,15 @@ export function NavMain({
 
 
   const renderContent = () => {
-    if (chatLoading) {
+    if (chatLoading || authLoading) {
       return (
-        <div className="flex justify-center">
+        <div className="flex justify-center mt-10">
           <div className="animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full" />
         </div>
       );
     }
 
-    if (!isAuthenticated) {
+    if (!isAuthenticated && !authLoading) {
       return state === "expanded" ? (
         <div
           className={cn(
