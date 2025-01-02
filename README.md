@@ -38,20 +38,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 
 
-PROJECT TODOS
-
-- fix open ai key git push issue
-- add pending assitant response animation to chat
-- 11/8
-- 11/20
-- 12/7
-- 12/8
-- 12/9
-- 12/10
-- 12/11
-- 12/13
-- 12/15
-- 12/19
-- 12/22
-- 12/27
-DEPLOYING ON 12/8 (maybe 12/9)
+PROJECT TODOs
