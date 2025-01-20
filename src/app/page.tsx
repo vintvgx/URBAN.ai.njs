@@ -12,7 +12,7 @@ import Root from "./components/root";
 export default function Home() {
   return (
     <div>
-      <SidebarProvider>
+      <SidebarProvider defaultOpen={false}>
         <Root />
       </SidebarProvider>
     </div>

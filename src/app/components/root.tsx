@@ -88,11 +88,11 @@ export default function Root() {
 
   // User settings state
   const [settings, setSettings] = useState<UserSettings>({
-    showSideBar: state === "expanded",
+    showSideBar: state === "collapsed",
     font: undefined,
     typewriterEffect: false,
     darkMode: theme === "dark",
-    uploadToDatabase: true,
+    uploadToDatabase: false,
   });
 
   // Keep settings.showSideBar in sync with sidebar state
